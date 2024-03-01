@@ -72,10 +72,10 @@ end
 local DoesItemExist = function(Item)
    for index, item_data in pairs(ItemList) do
       if index == tostring(Item) or item_data.DisplayName == tostring(Item) then
-         return true
+         return true, index
       end
    end
-   return false   
+   return false, Item
 end
 
 -- [[ MODULE FUNCTIONS ]]--
