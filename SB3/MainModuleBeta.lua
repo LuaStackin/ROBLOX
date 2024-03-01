@@ -186,8 +186,9 @@ MainModule.ValidatePurchase = function(ItemData)
 end
 
 MainModule.AddItem = function(Item, Requirements)
-   if DoesItemExist(tostring(Item)) then
-      PurchaseTable[tostring(Item)] = Requirements
+   local DoesExist, ActualName = DoesItemExist(tostring(Item))
+   if DoesExist then
+      PurchaseTable[tostring(ActualName)] = Requirements
       return true, "Success"
    end
    return false, "Item Does Not Exist"
