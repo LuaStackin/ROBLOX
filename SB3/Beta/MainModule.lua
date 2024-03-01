@@ -176,11 +176,15 @@ MainModule.ValidatePurchase = function(ItemData)
          end
       end
       if Global["Rarity"] ~= nil then
-         if type(Global["Rarity"]) == "table" then
+         local RequiredRarity = true
+         if Global["RequireRarityForMount"] ~= nil then
+            RequiredRarity = Global["RequireRarityForMount"] or true
+         end
+         if type(Global["Rarity"]) == "table" and RequiredRarity then
             if not table.find(Global["Rarity"], Rarity) then
                ValidPurchase = false
             end
-         elseif Global["Rarity"] ~= Rarity then
+         elseif Global["Rarity"] ~= Rarity and RequiredRarity then
             ValidPurchase = false
          end
       end
