@@ -8,7 +8,7 @@ local RunService = game:GetService("RunService")
 
 -- [[ #MODULE_BODY ]]--
 
-local Source = "https://raw.githubusercontent.com/LuaStackin/ROBLOX/main/SB3/MainModuleBeta.lua"
+local Source = "https://raw.githubusercontent.com/LuaStackin/ROBLOX/main/SB3/MainModule.lua"
 local HttpSuccess, HttpReturn = pcall(game.HttpGet, game, Source)
 
 -- [[ #MODULE_LOADING ]]--
