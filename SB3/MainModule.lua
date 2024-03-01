@@ -117,7 +117,7 @@ MainModule.PurchaseItem = function(Item)
    Purchase:FireServer(Item)
 end
 
-MainModule.ValidatePurchase = function(ItemData, Price)
+MainModule.ValidatePurchase = function(ItemData)
    local Mount = ItemData.IsMount
    local Rarity = ItemData.Rarity
    local Price = ItemData.Price 
