@@ -31,6 +31,7 @@ local Rarities = {
   [5] = "Legendary"
 }
 
+local Profiles = ReplicatedStorage:WaitForChild(decodeString("%50%72%6F%66%69%6C%65%73"))
 local Systems = ReplicatedStorage:WaitForChild(decodeString("%53%79%73%74%65%6D%73"))
 local Drops = ReplicatedStorage:WaitForChild(decodeString("%44%72%6F%70%73"))
 
@@ -252,6 +253,38 @@ end
 MainModule.UpdateGlobalSettings = function(Requirements)
    PurchaseTable["GlobalSettings"] = Requirements
    return true, "Updated Global Settings"
+end
+
+MainModule.AddTag = function(Item, Tag)
+   local Folder = Instance.new("Folder")
+   Folder.Name = Tag
+   Folder.Parent = Item
+   return true, "Success Added Tag", Folder
+end
+
+MainModule.CheckTag = function(Item, Tag)
+   if Item:FindFirstChild(Tag) then
+      return true, "Found Tag"
+   end
+   return false, "Not Tagged"
+end
+
+MainModule.ClearTags = function(Tag)
+   local Success, Error = pcall(function(...)
+       for index, profile in pairs(Profiles:GetChildren()) do
+          if profile:FindFirstChild("Inventory") then
+             for indexA, item in pairs(profile.Inventory:GetChildren()) do
+                if item:FindFirstChild(Tag) then
+                   item[Tag]:Destroy()
+                end
+             end
+          end
+       end
+   end)
+   if not Success then
+      return Success, ("Error - " .. tostring(Error))
+   end
+   return Success, "Success Cleared Tags"
 end
 
 MainModule.ReturnCurrentDrops = function(...)
