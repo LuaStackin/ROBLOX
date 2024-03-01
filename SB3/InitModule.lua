@@ -1,6 +1,6 @@
 -- [[ #INIT_MODULE ]]--
 
-local Init = {}
+local Init = {Version = 1}
 
 -- [[ #SERVICES_REQUIRED ]]--
 
