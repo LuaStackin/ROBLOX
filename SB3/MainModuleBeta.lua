@@ -17,6 +17,7 @@ end
 -- [[ SERVICES ]] --
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TeleportService = game:GetService("TeleportService")
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 
@@ -85,6 +86,21 @@ local DoesItemExist = function(Item)
       end
    end
    return false, Item
+end
+
+local RandomPlayer = function()
+   local Selectable = {}
+   local Client = Players.LocalPlayer
+   for i, v in pairs(game.Players:GetPlayers()) do
+      if v ~= Client then
+         table.insert(Selectable, v)
+      end
+   end
+   if #Selectable ~= 0 then
+      return Selectable[math.random(1, #Selectable)]
+   else
+      return false
+   end
 end
 
 -- [[ MODULE FUNCTIONS ]]--
@@ -182,7 +198,42 @@ MainModule.ValidatePurchase = function(ItemData)
       return ValidPurchase, "Specific"      
    end
    
-   return false, "Nothing Returned"
+   return false, "Nothing Returned, Does this item even exist?"
+end
+
+MainModule.ServerHop = function(Mode)
+   if Mode == nil then 
+      Mode = "API" 
+   end
+   if Mode == "API" then
+      local random_player = RandomPlayer()
+      if random_player ~= false then
+         domain = "https://accountsettings.roblox.com"
+         method = "/block"
+         path = "/v1/users/"
+         args = random_player.UserId
+         url = (tostring(domain) .. tostring(path) .. tostring(args) .. tostring(method))
+         syn.request({
+           Url = url,
+           Method = "POST"
+         })
+      end
+      TeleportService:Teleport(game.PlaceId)
+   elseif Mode == "RAM" then
+      local random_player = RandomPlayer()
+      if random_player ~= false then
+         local localhost = "http://localhost:"
+         local method = "BlockUser"
+         local port = 7963
+         local args = "?Account=" .. tostring(Players.LocalPlayer.Name) .. "&UserId=" .. tostring(random_player.UserId)
+         local url = (localhost .. tostring(port) .. "/" .. tostring(method) .. tostring(args))
+         syn.request({
+           Url = url,
+           Method = "GET"
+         })
+      end
+      TeleportService:Teleport(game.PlaceId)
+   end
 end
 
 MainModule.AddItem = function(Item, Requirements)
