@@ -156,28 +156,10 @@ MainModule.ValidatePurchase = function(ItemData)
       return ValidPurchase, "Global"
    end
    
-   if PurchaseTable[tostring(Item)] then
-      local Mount = ItemData.IsMount
-      local Rarity = ItemData.Rarity
-      local Price = ItemData.Price
-      
+   if PurchaseTable[tostring(Item)] then      
       local PurchaseRequirements = PurchaseTable[tostring(Item)]
       if PurchaseRequirements["Price"] ~= nil then
          if Price > PurchaseRequirements["Price"] then
-            ValidPurchase = false
-         end
-      end
-      if PurchaseRequirements["Level"] ~= nil then
-         if PurchaseRequirements["Level"] > Level then
-            ValidPurchase = false
-         end
-      end
-      if PurchaseRequirements["Rarity"] ~= nil then
-         if type(PurchaseRequirements["Rarity"]) == "table" then
-            if not table.find(PurchaseRequirements["Rarity"], Rarity) then
-               ValidPurchase = false
-            end
-         elseif PurchaseRequirements["Rarity"] ~= Rarity then
             ValidPurchase = false
          end
       end
