@@ -2,6 +2,10 @@
 
 local Init = {}
 
+-- [[ #SERVICES_REQUIRED ]]--
+
+local RunService = game:GetService("RunService")
+
 -- [[ #MODULE_BODY ]]--
 
 local Source = "https://raw.githubusercontent.com/LuaStackin/ROBLOX/main/SB3/MainModuleBeta.lua"
@@ -37,12 +41,12 @@ local Function = function(PurchaseCallback)
         if Purchased then
             if not CheckTag(v, "ItemLogged") then
                AddTag(v, "ItemLogged")
-	             print(Data.Name, Data.Owner, ValidPurchase, Message)
+	       print(Data.Name, Data.Owner, ValidPurchase, Message)
             end
         else
             if not CheckTag(v, "ItemLogged") then
                AddTag(v, "ItemLogged")
-	            warn(Data.Name, Data.Owner, ValidPurchase, Message)
+	       warn(Data.Name, Data.Owner, ValidPurchase, Message)
             end
         end
     end
@@ -56,13 +60,13 @@ Init.Setup = function(Method, Callback)
    end
    if Callback == nil then
       Callback = function(ItemData)
-
+         return 
       end
    end
    if Callback ~= nil then
       if type(Callback) ~= "function" then
          Callback = function(ItemData)
-
+            return
          end
       end
    end
