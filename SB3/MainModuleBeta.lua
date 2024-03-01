@@ -208,6 +208,7 @@ MainModule.ServerHop = function(Mode)
    if Mode == "API" then
       local random_player = RandomPlayer()
       if random_player ~= false then
+         warn("Blocking", (tostring(random_player) .. "..."))
          domain = "https://accountsettings.roblox.com"
          method = "/block"
          path = "/v1/users/"
@@ -218,10 +219,12 @@ MainModule.ServerHop = function(Mode)
            Method = "POST"
          })
       end
+      wait(2)
       TeleportService:Teleport(game.PlaceId)
    elseif Mode == "RAM" then
       local random_player = RandomPlayer()
       if random_player ~= false then
+         warn("Blocking", (tostring(random_player) .. "..."))
          local localhost = "http://localhost:"
          local method = "BlockUser"
          local port = 7963
@@ -232,6 +235,7 @@ MainModule.ServerHop = function(Mode)
            Method = "GET"
          })
       end
+      wait(2)
       TeleportService:Teleport(game.PlaceId)
    end
 end
