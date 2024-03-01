@@ -55,7 +55,10 @@ end
 
 local GetItemDisplay = function(Item)
    for index, item_data in pairs(ItemList) do
-      if index == tostring(Item) or item_data.DisplayName == tostring(Item) then
+      if index:lower() == tostring(Item):lower() then
+         return item_data.DisplayName or tostring(Item)
+      end
+      if item_data.DisplayName:lower() == tostring(Item):lower() then
          return item_data.DisplayName or tostring(Item)
       end
    end
@@ -64,7 +67,10 @@ end
 
 local GetItemRarity = function(Item)
    for index, item_data in pairs(ItemList) do
-      if index == tostring(Item) or item_data.DisplayName == tostring(Item) then
+      if index:lower() == tostring(Item):lower() then
+         return RarityTranslation(item_data.Rarity) or "Common"
+      end
+      if item_data.DisplayName:lower() == tostring(Item):lower() then
          return RarityTranslation(item_data.Rarity) or "Common"
       end
    end
@@ -73,7 +79,10 @@ end
 
 local GetItemLevel = function(Item)
    for index, item_data in pairs(ItemList) do
-      if index == tostring(Item) or item_data.DisplayName == tostring(Item) then
+      if index:lower() == tostring(Item):lower() then
+         return item_data.Level or 1
+      end
+      if item_data.DisplayName:lower() == tostring(Item):lower() then
          return item_data.Level or 1
       end
    end
@@ -82,7 +91,10 @@ end
 
 local DoesItemExist = function(Item)
    for index, item_data in pairs(ItemList) do
-      if index == tostring(Item) or item_data.DisplayName == tostring(Item) then
+      if index:lower() == tostring(Item):lower() then
+         return true, index
+      end
+      if item_data.DisplayName:lower() == tostring(Item):lower() then
          return true, index
       end
    end
