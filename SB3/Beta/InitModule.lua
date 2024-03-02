@@ -75,7 +75,7 @@ Init.Setup = function(Settings, Callback)
       Settings = {["Method"] = "RunService"}
    else
       if Settings["ServerHopTimer"] ~= nil and Settings["ServerHopTimer"] ~= 0 then
-         ResetTime, Thread = Module.CreateTimer(Settings["ServerHopTimer"], Module.ServerHop)	 
+         ResetTime, Thread = Module.CreateTimer((60 * Settings["ServerHopTimer"]), Module.ServerHop)	 
       end
       if Settings["Method"] ~= nil then
          Method =  Settings["Method"]
