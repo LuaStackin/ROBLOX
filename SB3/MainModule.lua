@@ -326,6 +326,7 @@ MainModule.CreateTimer = function(Time, Function)
       return Timer
    end
    coroutine.resume(Thread)
+   warn("Timer Will Trigger Function in", tostring(60 * Time), "Minute(s)")
    return ResetTimer, Thread
 end
       
