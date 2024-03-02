@@ -5,6 +5,7 @@ local Init = {Version = 1}
 -- [[ #SERVICES_REQUIRED ]]--
 
 local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
 
 -- [[ #MODULE_BODY ]]--
 
@@ -23,7 +24,7 @@ local ItemData, ValidatePurchase = Module.ReturnItemData, Module.ValidatePurchas
 
 --[[ #MAIN_SCRIPT ]]--
 
-local Function = function(PurchaseCallback)
+local Function = function(MininumPlayerCount, PurchaseCallback)
     Module.ClearTags("ItemLogged")
     Module.ClearTags("PurchaseCallback")
     for i, v in pairs(Module.ReturnCurrentDrops()) do
@@ -50,11 +51,14 @@ local Function = function(PurchaseCallback)
             end
         end
     end
+    if MininumPlayerCount > #Players:GetPlayers() then
+
+    end
 end
 
 -- [[ #SETUP_FUNCTION ]]--
 
-Init.Setup = function(Method, Callback)
+Init.Setup = function(MininumPlayerCount, Method, Callback)
    if Method == nil then
       Method = "RunService"
    end
@@ -73,7 +77,7 @@ Init.Setup = function(Method, Callback)
    if Method == "RunService" then
       local Connection;
       Connection = RunService.RenderStepped:Connect(function(...)
-          Function(Callback)
+          Function(Callback, MininumPlayerCount)
       end)
       return Connection
    elseif Method == "While" then
@@ -83,7 +87,7 @@ Init.Setup = function(Method, Callback)
       end
       local Subroutine = coroutine.create(function(...)
           while true do
-             local Success, Error = pcall(Function, Callback)
+             local Success, Error = pcall(Function, Callback, MininumPlayerCount)
              if not Success then
                 warn("Error -", tostring(Error))
              end
