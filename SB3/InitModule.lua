@@ -101,4 +101,4 @@ end
 
 -- [[ #INIT ]]--
 
-return Init, UpdateGlobal, AddItem
+return Init, UpdateGlobal, AddItem, Module
