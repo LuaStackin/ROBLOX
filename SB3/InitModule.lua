@@ -7,6 +7,10 @@ local Init = {Version = 1}
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 
+--[[ #LOCAL_VARIABLES ]]--
+
+local ResetTime, Thread = nil,nil
+
 -- [[ #MODULE_BODY ]]--
 
 local Source = "https://raw.githubusercontent.com/LuaStackin/ROBLOX/main/SB3/MainModule.lua"
@@ -24,9 +28,14 @@ local ItemData, ValidatePurchase = Module.ReturnItemData, Module.ValidatePurchas
 
 --[[ #MAIN_SCRIPT ]]--
 
-local Function = function(PurchaseCallback, MininumPlayerCount)
+local Function = function(PurchaseCallback, Settings)
     Module.ClearTags("ItemLogged")
     Module.ClearTags("PurchaseCallback")
+    if Settings["MininumPlayerCount"] ~= nil then
+       if (Settings["MininumPlayerCount"] > #Players:GetPlayers()) then
+          Module.ServerHop()
+       end
+    end
     for i, v in pairs(Module.ReturnCurrentDrops()) do
         local Data = ItemData(v)
         local ValidPurchase, Message = ValidatePurchase(Data)
@@ -40,6 +49,10 @@ local Function = function(PurchaseCallback, MininumPlayerCount)
             Purchased = true
         end
         if Purchased then
+	    if ResetTime ~= nil then
+               local TimeR = ResetTime()
+	       print("Item Found, Time Reset To:", tostring(TimeR))
+	    end
             if not CheckTag(v, "ItemLogged") then
                AddTag(v, "ItemLogged")
 	       print(Data.Name, Data.Owner, ValidPurchase, Message)
@@ -51,15 +64,24 @@ local Function = function(PurchaseCallback, MininumPlayerCount)
             end
         end
     end
-    if MininumPlayerCount > #Players:GetPlayers() then
-       Module.ServerHop("API")
-    end
 end
 
 -- [[ #SETUP_FUNCTION ]]--
 
-Init.Setup = function(MininumPlayerCount, Method, Callback)
-   if Method == nil then
+Init.Setup = function(Settings, Callback)
+   local Method = nil
+   local ServerHopSettings = nil
+   if Settings == nil then
+      Settings = {["Method"] = "RunService"}
+   else
+      if Settings["ServerHopTimer"] ~= nil and Settings["ServerHopTimer"] ~= 0 then
+         ResetTime, Thread = Module.CreateTimer((60 * Settings["ServerHopTimer"]), Module.ServerHop)	 
+      end
+      if Settings["Method"] ~= nil then
+         Method =  Settings["Method"]
+      end
+   end
+   if Method ~= "While" and Method ~= "RunService" then
       Method = "RunService"
    end
    if Callback == nil then
@@ -77,7 +99,7 @@ Init.Setup = function(MininumPlayerCount, Method, Callback)
    if Method == "RunService" then
       local Connection;
       Connection = RunService.RenderStepped:Connect(function(...)
-          Function(Callback, MininumPlayerCount)
+          Function(Callback, Settings)
       end)
       return Connection
    elseif Method == "While" then
@@ -87,7 +109,7 @@ Init.Setup = function(MininumPlayerCount, Method, Callback)
       end
       local Subroutine = coroutine.create(function(...)
           while true do
-             local Success, Error = pcall(Function, Callback, MininumPlayerCount)
+             local Success, Error = pcall(Function, Callback, Settings)
              if not Success then
                 warn("Error -", tostring(Error))
              end
