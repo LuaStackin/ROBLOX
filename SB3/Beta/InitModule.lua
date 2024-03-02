@@ -72,11 +72,17 @@ Init.Setup = function(Settings, Callback)
    local Method = nil
    local ServerHopSettings = nil
    if Settings == nil then
-      Settings = {}
+      Settings = {["Method"] = "RunService"}
    else
       if Settings["ServerHopTimer"] ~= nil and Settings["ServerHopTimer"] ~= 0 then
          ResetTime, Thread = Module.CreateTimer(Settings["ServerHopTimer"], Module.ServerHop)	 
       end
+      if Settings["Method"] ~= nil then
+         Method =  Settings["Method"]
+      end
+   end
+   if Method ~= "While" and Method ~= "RunService" then
+      Method = "RunService"
    end
    if Callback == nil then
       Callback = function(ItemData)
