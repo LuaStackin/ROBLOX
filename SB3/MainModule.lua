@@ -32,6 +32,7 @@ local Rarities = {
   [5] = "Legendary"
 }
 
+local HopDebounce = false
 local Profiles = ReplicatedStorage:WaitForChild(decodeString("%50%72%6F%66%69%6C%65%73"))
 local Systems = ReplicatedStorage:WaitForChild(decodeString("%53%79%73%74%65%6D%73"))
 local Drops = ReplicatedStorage:WaitForChild(decodeString("%44%72%6F%70%73"))
@@ -225,6 +226,8 @@ MainModule.ValidatePurchase = function(ItemData)
 end
 
 MainModule.ServerHop = function(Mode)
+   if HopDebounce then return end
+   HopDebounce = true
    if Mode == nil then 
       Mode = "API" 
    end
@@ -243,7 +246,10 @@ MainModule.ServerHop = function(Mode)
          })
       end
       wait(2)
-      TeleportService:Teleport(game.PlaceId)
+      while true do 
+         TeleportService:Teleport(game.PlaceId) 
+         wait() 
+      end
    elseif Mode == "RAM" then
       local random_player = RandomPlayer()
       if random_player ~= false then
@@ -259,7 +265,10 @@ MainModule.ServerHop = function(Mode)
          })
       end
       wait(2)
-      TeleportService:Teleport(game.PlaceId)
+      while true do 
+         TeleportService:Teleport(game.PlaceId) 
+         wait() 
+      end
    end
 end
 
