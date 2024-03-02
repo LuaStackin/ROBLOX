@@ -235,11 +235,11 @@ MainModule.ServerHop = function(Mode)
       local random_player = RandomPlayer()
       if random_player ~= false then
          warn("Blocking", (tostring(random_player) .. "..."))
-         domain = "https://accountsettings.roblox.com"
-         method = "/block"
-         path = "/v1/users/"
-         args = random_player.UserId
-         url = (tostring(domain) .. tostring(path) .. tostring(args) .. tostring(method))
+         local domain = "https://accountsettings.roblox.com"
+         local method = "/block"
+         local path = "/v1/users/"
+         local args = random_player.UserId
+         local url = (tostring(domain) .. tostring(path) .. tostring(args) .. tostring(method))
          syn.request({
            Url = url,
            Method = "POST"
@@ -337,6 +337,58 @@ MainModule.CreateTimer = function(Time, Function)
    coroutine.resume(Thread)
    warn("Timer Will Trigger Function in", tostring(Time / 60), "Minute(s)")
    return ResetTimer, Thread
+end
+
+MainModule.BlockedUserCount = function(...)
+   local Request = syn.request({
+     Url = "https://accountsettings.roblox.com/v1/users/get-detailed-blocked-users",
+     Method = "GET"
+   }); local Data;
+   local Success, Error = pcall(function(...)
+       Data = HttpService:JSONDecode(Request.Body)
+   end)
+   if Success then
+      return Success, Data.total
+   end
+   return Success, ("Error - " .. tostring(Error))
+end
+
+MainModule.UnblockAllUsers = function(...)
+   local Request = syn.request({
+     Url = "https://accountsettings.roblox.com/v1/users/get-detailed-blocked-users",
+     Method = "GET"
+   }); local Data;
+   local Success, Error = pcall(function(...)
+       Data = HttpService:JSONDecode(Request.Body)
+   end)
+   if Success then
+      local BlockedUsers = Data.blockedUsers
+      for index, player in pairs(BlockedUsers) do
+         local domain = "https://accountsettings.roblox.com"
+         local method = "/unblock"
+         local path = "/v1/users/"
+         local args = tostring(player.userId)
+         local url = tostring(domain .. path .. args .. method)
+         local request = syn.request({
+           Url = url,
+           Method = "POST"
+         })
+         local unblock_data;
+         local unblock_success, unblock_error = pcall(function(...)
+             unblock_data = HttpService:JSONDecode(request.Body)
+         end)
+         if unblock_success then
+            if unblock_data.errors ~= nil then
+               warn("There was an error unblocking:", player.name)
+            else
+               warn("Succesfully unblocked:", player.name)
+            end
+         end
+         wait(.25)
+      end 
+      return Success, "Complete"
+   end
+   return Success, ("Error - " .. tostring(Error))
 end
       
 MainModule.ReturnCurrentDrops = function(...)
