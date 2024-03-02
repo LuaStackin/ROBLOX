@@ -325,6 +325,7 @@ MainModule.CreateTimer = function(Time, Function)
       Timer = 0
       return Timer
    end
+   coroutine.resume(Thread)
    return ResetTimer, Thread
 end
       
