@@ -33,7 +33,7 @@ local Function = function(PurchaseCallback, Settings)
     Module.ClearTags("PurchaseCallback")
     if Settings["MininumPlayerCount"] ~= nil then
        if (Settings["MininumPlayerCount"] > #Players:GetPlayers()) then
-          MainModule.ServerHop()
+          Module.ServerHop()
        end
     end
     for i, v in pairs(Module.ReturnCurrentDrops()) do
