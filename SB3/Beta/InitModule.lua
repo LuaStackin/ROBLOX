@@ -13,7 +13,7 @@ local ResetTime, Thread = nil,nil
 
 -- [[ #MODULE_BODY ]]--
 
-local Source = "https://raw.githubusercontent.com/LuaStackin/ROBLOX/main/SB3/MainModule.lua"
+local Source = "https://raw.githubusercontent.com/LuaStackin/ROBLOX/main/SB3/Beta/MainModule.lua"
 local HttpSuccess, HttpReturn = pcall(game.HttpGet, game, Source)
 
 -- [[ #MODULE_LOADING ]]--
