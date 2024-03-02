@@ -31,8 +31,16 @@ local ItemData, ValidatePurchase = Module.ReturnItemData, Module.ValidatePurchas
 local Function = function(PurchaseCallback, Settings)
     Module.ClearTags("ItemLogged")
     Module.ClearTags("PurchaseCallback")
+    
     if Settings["MininumPlayerCount"] ~= nil then
        if (Settings["MininumPlayerCount"] > #Players:GetPlayers()) then
+	  if Settings["MaxBlockedUsers"] ~= nil then
+             local Success, BlockCount = Module.BlockedUserCount()
+	     if not Success then BlockCount = 0 end
+	     if BlockCount >= Settings["MaxBlockedUsers"] then
+                Module.UnblockAllUsers()
+	     end
+	  end
           Module.ServerHop()
        end
     end
