@@ -24,7 +24,7 @@ local ItemData, ValidatePurchase = Module.ReturnItemData, Module.ValidatePurchas
 
 --[[ #MAIN_SCRIPT ]]--
 
-local Function = function(MininumPlayerCount, PurchaseCallback)
+local Function = function(PurchaseCallback, MininumPlayerCount)
     Module.ClearTags("ItemLogged")
     Module.ClearTags("PurchaseCallback")
     for i, v in pairs(Module.ReturnCurrentDrops()) do
@@ -52,7 +52,7 @@ local Function = function(MininumPlayerCount, PurchaseCallback)
         end
     end
     if MininumPlayerCount > #Players:GetPlayers() then
-
+       Module.ServerHop("API")
     end
 end
 
