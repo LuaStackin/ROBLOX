@@ -276,6 +276,7 @@ MainModule.AddItem = function(Item, Requirements)
    local DoesExist, ActualName = DoesItemExist(tostring(Item))
    if DoesExist then
       PurchaseTable[tostring(ActualName)] = Requirements
+      warn("Item Added To Purchase Table:", tostring(ActualName))
       return true, "Success"
    end
    return false, "Item Does Not Exist"
