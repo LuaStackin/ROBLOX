@@ -309,6 +309,26 @@ MainModule.ClearTags = function(Tag)
    return Success, "Success Cleared Tags"
 end
 
+MainModule.CreateTimer = function(Time, Function)
+   local Timer = 0
+   local Thread = coroutine.create(function(...)
+       while true do
+          wait(1)
+          Timer = Timer + 1
+          if Timer >= Time then
+             break;
+          end
+       end
+       Function()
+   end)
+   local ResetTimer = function()
+      Timer = 0
+      return Timer
+   end
+   coroutine.resume(Thread)
+   return ResetTimer, Thread
+end
+      
 MainModule.ReturnCurrentDrops = function(...)
    return Drops:GetChildren()
 end
