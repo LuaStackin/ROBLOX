@@ -162,6 +162,11 @@ MainModule.ValidatePurchase = function(ItemData)
    local Level = ItemData.Level
    local Item = ItemData.Name
    local ValidPurchase = true
+
+   if (Price == 0) then
+      ValidPurchase = false
+      return ValidPurchase, "Invalid Price (0)"
+   end
    
    if PurchaseTable["GlobalSettings"] ~= nil and PurchaseTable[tostring(Item)] == nil then
       local Global = PurchaseTable["GlobalSettings"]
