@@ -41,7 +41,7 @@ local ScanDrops = function(...)
                         local Success, Error =
                             pcall(
                             function(...)
-                                CreateSimplePath(Root, Humanoid, TargetPart)
+                                local s,e = MainModule.SimplePathFind(Root, Humanoid, TargetPart); warn(s,e)
                                 fireproximityprompt(value, 0)
                             end
                         )
@@ -62,7 +62,7 @@ if Client.Character then
       Client.Character.Humanoid.WalkSpeed = 30 -- just to make you a little faster :D
    end
 end 
-AntiAfk(); warn("Loaded - Success")
+MainModule.AntiAFK(); warn("Loaded - Success")
 while true do
    local Function_Success, Function_Error = pcall(ScanDrops)
    if not Function_Success then
