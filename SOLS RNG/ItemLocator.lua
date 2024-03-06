@@ -59,7 +59,7 @@ end
 
 if Client.Character then
    if Client.Character:FindFirstChild("Humanoid") then
-      Client.Character.Humanoid.WalkSpeed = 30 -- just to make you a little faster :D
+      Client.Character.Humanoid.WalkSpeed = 19 -- just to make you a little faster :D
    end
 end 
 MainModule.AntiAFK(); warn("Loaded - Success")
