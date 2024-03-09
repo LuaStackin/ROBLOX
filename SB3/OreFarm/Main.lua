@@ -1,5 +1,7 @@
 wait(3) -- loading delay
 
+warn("SB3OF-V1")
+
 -- services 
 
 local Players = game:GetService("Players")
@@ -20,11 +22,15 @@ local Effects = ReplicatedStorage.Systems.Effects
 -- Settings
 
 local Ore = "Quartz"
+local MineDelay = 0.5
 
 if getgenv().Settings ~= nil then
    local Settings = getgenv().Settings
    if Settings.Ore ~= nil then
       Ore = Settings.Ore
+   end
+   if Settings.MineDelay ~= nil then
+      MineDelay = Settings.MineDelay
    end
 end
 
@@ -112,5 +118,5 @@ while true do
    if not Success then
       warn(Error)
    end
-   wait(.5)
+   wait(MineDelay)
 end
