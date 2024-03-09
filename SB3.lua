@@ -29,10 +29,10 @@ local BreakLoop = false
 if getgenv().Settings ~= nil then
    local Settings = getgenv().Settings
    if Settings.Boss ~= nil then
-
+      Boss = Settings.Boss
    end
    if Settings.AttackDelay ~= nil then
-
+      HitDelay = Settings.AttackDelay
    end
    if Settings.PositionDistance ~= nil then
       MinDistance = Settings.PositionDistance + 5
@@ -95,6 +95,11 @@ getgenv().CTPFUNC = RenderStepped:Connect(function(...)
           PickupRemote:FireServer(v)
        end
     end  
+    for z, x in pairs(Players:GetPlayers()) do
+       if x.Character and x ~= Client then 
+          x.Character:Destroy() 
+       end
+    end 
 end)
 
 getgenv().CNCFUNC = Stepped:Connect(function(...)
