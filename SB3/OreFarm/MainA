@@ -112,5 +112,5 @@ while true do
    if not Success then
       warn(Error)
    end
-   wait(.8)
+   wait(.5)
 end
