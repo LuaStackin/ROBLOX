@@ -15,6 +15,7 @@ local Client = Players.LocalPlayer
 
 local Ores = workspace.Ores
 local Drops = ReplicatedStorage.Drops
+local Effects = ReplicatedStorage.Systems.Effects
 
 -- Settings
 
@@ -62,19 +63,14 @@ if getgenv().CMOFUNC then
    getgenv().CMOFUNC()
 end 
 
-getgenv().CTPFUNC = RenderStepped:Connect(function(...)
+getgenv().CTPFUNC = Stepped:Connect(function(...)
     if Client.Character then
        local Character = Client.Character
        if Character:FindFirstChild("HumanoidRootPart") and Ores:FindFirstChild(Ore) then
           local HRP = Character.HumanoidRootPart
           local ORP = Ores[Ore].Quartz
-          HRP.CFrame = ORP.CFrame * CFrame.new(0, -5, 0)
-          Part.CFrame = HRP.CFrame * CFrame.new(0, -4, 0)
-       elseif Character:FindFirstChild("HumanoidRootPart") and not Ores:FindFirstChild(Ore) then
-          return      
-       end
-       for i, v in pairs(Drops:GetChildren()) do
-          PickupRemote:FireServer(v)
+          HRP.CFrame = ORP.CFrame * CFrame.new(0, -8, 0)
+          Part.CFrame = HRP.CFrame * CFrame.new(0, -5, 0)
        end
     end  
 end)
@@ -99,13 +95,7 @@ getgenv().AAFK = Idled:Connect(function(...)
      VirtualUser:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)    
 end) 
 
-warn("init 4")
-
-for i, v in pairs(Effects:GetChildren()) do
-   v:Destroy()
-end
-
-warn("init 5 - complete")
+warn("init 4 - complete")
 
 while true do
    if BreakLoop then 
@@ -113,6 +103,14 @@ while true do
       Part:Destroy()
       break;
    end
-   MineRemote:FireServer()
-   wait(.2)
+   local Success, Error = pcall(function(...)
+	MineRemote:FireServer()
+        for i, v in pairs(Drops:GetChildren()) do
+           PickupRemote:FireServer(v)
+        end
+   end)
+   if not Success then
+      warn(Error)
+   end
+   wait(.8)
 end
