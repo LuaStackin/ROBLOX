@@ -22,7 +22,7 @@ local BossArenas = workspace.BossArenas
 
 local Boss = "Elize The Siren" -- (Elize The Siren, Yeti)
 local HitDelay = 0.2 -- seconds
-local MinDistance = 45 -- studs
+local MinDistance = 100 -- studs
 local PositionDistance = 28
 local BreakLoop = false
 
