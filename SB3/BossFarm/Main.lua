@@ -1,0 +1,175 @@
+wait(3) -- loading delay
+
+-- services 
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local VirtualUser = game:GetService("VirtualUser")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+-- variables
+
+local Client = Players.LocalPlayer
+
+-- locations
+
+local Mobs = workspace.Mobs
+local Drops = ReplicatedStorage.Drops
+local Effects = ReplicatedStorage.Systems.Effects
+local BossArenas = workspace.BossArenas
+
+-- Settings
+
+local Boss = "Elize The Siren" -- (Elize The Siren, Yeti)
+local HitDelay = 0.2 -- seconds
+local MinDistance = 30 -- studs
+local PositionDistance = 24
+local BreakLoop = false
+
+if getgenv().Settings ~= nil then
+   local Settings = getgenv().Settings
+   if Settings.Boss ~= nil then
+      Boss = Settings.Boss
+   end
+   if Settings.AttackDelay ~= nil then
+      HitDelay = Settings.AttackDelay
+   end
+   if Settings.PositionDistance ~= nil then
+      MinDistance = Settings.PositionDistance + 5
+      PositionDistance = Settings.PositionDistance
+   end
+end
+
+warn("init 1")
+
+-- Remotes & Other
+
+local Part = Instance.new("Part"); Part.Anchored = true; Part.Size = Vector3.new(25, 3, 25); Part.Parent = workspace;
+local CombatRemote = ReplicatedStorage.Systems.Combat.PlayerAttack
+local PickupRemote = ReplicatedStorage.Systems.Drops.Pickup
+
+-- Connections
+
+local RenderStepped = RunService.RenderStepped
+local Stepped = RunService.Stepped
+local Idled = Client.Idled
+
+warn("init 2")
+
+if getgenv().CTPFUNC then
+   warn("Disconnected Teleport")
+   getgenv().CTPFUNC:Disconnect()
+end
+
+if getgenv().CNCFUNC then
+   warn("Disconnected Noclip")
+   getgenv().CNCFUNC:Disconnect()
+end
+
+if getgenv().CMHFUNC then
+   getgenv().CMHFUNC()
+end
+
+if getgenv().AAFK then
+   warn("Anti-AFK, Disconnected!")
+   getgenv().AAFK:Disconnect()
+end
+
+warn("init 3")
+
+getgenv().CTPFUNC = RenderStepped:Connect(function(...)
+    if Client.Character then
+       local Character = Client.Character
+       if Character:FindFirstChild("HumanoidRootPart") and Mobs:FindFirstChild(Boss) then
+          local HRP = Character.HumanoidRootPart
+          local Mob = Mobs[Boss] 
+          HRP.CFrame = Mob.HumanoidRootPart.CFrame * CFrame.new(0, -PositionDistance, 0)
+          Part.CFrame = HRP.CFrame * CFrame.new(0, -4, 0)
+       elseif Character:FindFirstChild("HumanoidRootPart") and not Mobs:FindFirstChild(Boss) then
+          local SPW = BossArenas[Boss].Spawn
+          local HRP = Character.HumanoidRootPart
+          HRP.CFrame = SPW.CFrame * CFrame.new(0, -15, 0)
+          Part.CFrame = HRP.CFrame * CFrame.new(0, -4, 0)          
+       end
+       for i, v in pairs(Drops:GetChildren()) do
+          PickupRemote:FireServer(v)
+       end
+    end  
+    for z, x in pairs(Players:GetPlayers()) do
+       if x.Character and x ~= Client then 
+          x.Character:Destroy() 
+       end
+    end 
+end)
+
+getgenv().CNCFUNC = Stepped:Connect(function(...)
+    for i, v in pairs(Client.Character:GetChildren()) do
+       if v:IsA("BasePart") then
+          v.CanCollide = false
+       end
+    end
+end)
+
+getgenv().CMHFUNC = function(...)
+   BreakLoop = true
+end
+
+warn(getgenv().AAFK)
+
+getgenv().AAFK = Idled:Connect(function(...)
+     VirtualUser:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+     wait(1)
+     VirtualUser:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)    
+end) 
+
+warn("init 4")
+
+if not getgenv().OriginalEffects then
+   getgenv().OriginalEffects = Effects:Clone()
+end
+
+for i, v in pairs(Effects:GetChildren()) do
+   v:Destroy()
+end
+
+warn("init 5 - complete")
+
+while true do
+   if BreakLoop then 
+      warn("Exiting While Loop!")
+      Part:Destroy()
+      break;
+   end
+   local Success, Error = pcall(function(...)
+       if Mobs:FindFirstChild(Boss) then
+          local Boss = Mobs:FindFirstChild(Boss)
+
+          local Boss_Root = nil
+          local Player_Root = nil
+
+          if Boss:FindFirstChild("HumanoidRootPart") then
+             Boss_Root = Boss:FindFirstChild("HumanoidRootPart")
+          end
+
+          if Client.Character then
+             local Character = Client.Character
+             if Character:FindFirstChild("HumanoidRootPart") then
+                Player_Root = Character:FindFirstChild("HumanoidRootPart")
+             end
+          end
+
+          if (Boss_Root ~= nil and Player_Root ~= nil) then
+             local Distance = (Player_Root.Position - Boss_Root.Position).magnitude
+             if MinDistance >= Distance then
+                wait(HitDelay)
+                CombatRemote:FireServer({[1] = Boss})
+                warn("Attacked Boss!")
+             end
+          end
+       end
+   end)
+   if not Success then
+      warn(Error)
+   end
+   wait()
+end
