@@ -14,6 +14,7 @@ local Client = Players.LocalPlayer
 -- locations
 
 local Ores = workspace.Ores
+local Drops = ReplicatedStorage.Drops
 
 -- Settings
 
@@ -69,7 +70,6 @@ getgenv().CTPFUNC = RenderStepped:Connect(function(...)
           local ORP = Ores[Ore].Quartz
           HRP.CFrame = ORP.CFrame * CFrame.new(0, -5, 0)
           Part.CFrame = HRP.CFrame * CFrame.new(0, -4, 0)
-          MineRemote:FireServer()
        elseif Character:FindFirstChild("HumanoidRootPart") and not Ores:FindFirstChild(Ore) then
           return      
        end
@@ -113,5 +113,6 @@ while true do
       Part:Destroy()
       break;
    end
-   wait()
+   MineRemote:FireServer()
+   wait(.2)
 end
