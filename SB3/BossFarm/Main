@@ -95,11 +95,6 @@ getgenv().CTPFUNC = RenderStepped:Connect(function(...)
           PickupRemote:FireServer(v)
        end
     end  
-    for z, x in pairs(Players:GetPlayers()) do
-       if x.Character and x ~= Client then 
-          x.Character:Destroy() 
-       end
-    end 
 end)
 
 getgenv().CNCFUNC = Stepped:Connect(function(...)
