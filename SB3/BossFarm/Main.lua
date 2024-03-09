@@ -29,14 +29,18 @@ local BreakLoop = false
 if getgenv().Settings ~= nil then
    local Settings = getgenv().Settings
    if Settings.Boss ~= nil then
-      Boss = Settings.Boss
+      Boss = Settings.Boss  
+      warn("Set Boss:", Boss)
    end
    if Settings.AttackDelay ~= nil then
       HitDelay = Settings.AttackDelay
+      warn("Set Hit Delay:", Boss)
    end
    if Settings.PositionDistance ~= nil then
-      MinDistance = Settings.PositionDistance + 5
+      MinDistance = Settings.PositionDistance + 15
       PositionDistance = Settings.PositionDistance
+      warn("Set Distance:", PositionDistance)
+      warn("Set Mininum Distance:", MinDistance)
    end
 end
 
