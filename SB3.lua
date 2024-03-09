@@ -21,13 +21,24 @@ local BossArenas = workspace.BossArenas
 -- Settings
 
 local Boss = "Elize The Siren" -- (Elize The Siren, Yeti)
-if getgenv().ChosenBoss ~= nil then
-   Boss = getgenv().ChosenBoss
-end
 local HitDelay = 0.2 -- seconds
 local MinDistance = 30 -- studs
 local PositionDistance = 24
 local BreakLoop = false
+
+if getgenv().Settings ~= nil then
+   local Settings = getgenv().Settings
+   if Settings.Boss ~= nil then
+
+   end
+   if Settings.AttackDelay ~= nil then
+
+   end
+   if Settings.PositionDistance ~= nil then
+      MinDistance = Settings.PositionDistance + 5
+      PositionDistance = Settings.PositionDistance
+   end
+end
 
 warn("init 1")
 
