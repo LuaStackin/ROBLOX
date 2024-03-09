@@ -16,6 +16,7 @@ local Client = Players.LocalPlayer
 local Mobs = workspace.Mobs
 local Drops = ReplicatedStorage.Drops
 local Effects = ReplicatedStorage.Systems.Effects
+local WEffects = workspace.Effects
 local BossArenas = workspace.BossArenas
 
 -- Settings
@@ -75,8 +76,13 @@ if getgenv().CMHFUNC then
 end
 
 if getgenv().AAFK then
-   warn("Anti-AFK, Disconnected!")
+   warn("Disconnected Anti-AFK")
    getgenv().AAFK:Disconnect()
+end
+
+if getgenv().DEffects then
+   warn("Disconnected Delete Effects")
+   getgenv().DEffects:Disconnect()   
 end
 
 warn("init 3")
@@ -113,13 +119,16 @@ getgenv().CMHFUNC = function(...)
    BreakLoop = true
 end
 
-warn(getgenv().AAFK)
-
 getgenv().AAFK = Idled:Connect(function(...)
      VirtualUser:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
      wait(1)
      VirtualUser:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)    
 end) 
+
+getgenv().DEffects = WEffects.ChildAdded:Connect(function(Effect)
+    wait(.1)
+    Effect:Destroy()
+end)
 
 warn("init 4")
 
