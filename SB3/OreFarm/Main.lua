@@ -79,6 +79,9 @@ getgenv().CTPFUNC = RenderStepped:Connect(function(...)
           Part.CFrame = HRP.CFrame * CFrame.new(0, -5, 0)
        end
     end  
+    for i, v in pairs(Drops:GetChildren()) do
+       PickupRemote:FireServer(v) 
+    end
 end)
 
 getgenv().CNCFUNC = Stepped:Connect(function(...)
@@ -111,9 +114,6 @@ while true do
    end
    local Success, Error = pcall(function(...)
 	MineRemote:FireServer()
-        for i, v in pairs(Drops:GetChildren()) do
-           PickupRemote:FireServer(v)
-        end
    end)
    if not Success then
       warn(Error)
