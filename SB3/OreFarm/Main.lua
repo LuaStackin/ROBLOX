@@ -63,7 +63,7 @@ if getgenv().CMOFUNC then
    getgenv().CMOFUNC()
 end 
 
-getgenv().CTPFUNC = Stepped:Connect(function(...)
+getgenv().CTPFUNC = RenderStepped:Connect(function(...)
     if Client.Character then
        local Character = Client.Character
        if Character:FindFirstChild("HumanoidRootPart") and Ores:FindFirstChild(Ore) then
