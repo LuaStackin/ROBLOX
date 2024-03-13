@@ -93,7 +93,7 @@ getgenv().CTPFUNC = RenderStepped:Connect(function(...)
        if Character:FindFirstChild("HumanoidRootPart") and Mobs:FindFirstChild(Mob) then
           local HRP = Character.HumanoidRootPart
           local Mob = Mobs[Mob] 
-          if Mob.Humanoid.Health <= 0 then
+          if Mob:GetAttribute("HP") <= 0  then
              Mob:Destroy()
              return
           end
