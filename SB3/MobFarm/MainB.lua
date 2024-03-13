@@ -93,7 +93,7 @@ getgenv().SelectMobAndTeleport = function(...)
           CanAttack = true
        end
     end
-end)
+end
 
 getgenv().DamageMob = function(...)
    if SelectedMob ~= nil then
