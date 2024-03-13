@@ -29,6 +29,10 @@ local PositionDistance = 24
 local DisableEffects = true
 local BreakLoop = false
 
+if getgenv().KillSwitch then
+   getgenv().KillSwitch()
+end
+
 if getgenv().Settings ~= nil then
    local Settings = getgenv().Settings
    if Settings.Mob ~= nil then
@@ -105,7 +109,7 @@ getgenv().DamageMob = function(...)
          end
       end
       if Root ~= nil then
-         local DistanceFromMob = (Root.Position - SelectedMob.HumanoidRootPart.Position)
+         local DistanceFromMob = (Root.Position - SelectedMob.HumanoidRootPart.Position).magnitude
          if MinDistance >= DistanceFromMob then
             wait(HitDelay)
             CombatRemote:FireServer({[1] = SelectedMob})
@@ -114,7 +118,7 @@ getgenv().DamageMob = function(...)
    end
 end
 
-ThreadRun(ThreadCreate(function(...)
+local Thread_Function1 = ThreadRun(ThreadCreate(function(...)
      local Function = getgenv().SelectMobAndTeleport
      while true do
         local Success, Error = pcall(Function)
@@ -125,7 +129,7 @@ ThreadRun(ThreadCreate(function(...)
      end
 end))
 
-ThreadRun(ThreadCreate(function(...)
+local Thread_Function2 = ThreadRun(ThreadCreate(function(...)
      local Function = getgenv().DamageMob
      while true do
         local Success, Error = pcall(Function)
@@ -136,6 +140,17 @@ ThreadRun(ThreadCreate(function(...)
      end
 end))
 
+getgenv().Noclip = Stepped:Connect(function(...)
+    if Client.Character then
+       local Character = Client.Character
+       for i, v in pairs(Character:GetChildren()) do
+          if v:IsA("BasePart") then
+             v.CanCollide = false
+          end
+       end
+    end
+end)
+                  
 if DisableEffects then
    getgenv().DEffects = WEffects.ChildAdded:Connect(function(Effect)
        wait(.1)
@@ -150,5 +165,19 @@ if DisableEffects then
 
    for i, v in pairs(Effects:GetChildren()) do
       v:Destroy()
+   end
+end
+                  
+getgenv().KillSwitch = function(...)
+   Thread_Function1.close()
+   Thread_Function2.close()
+   getgenv().DEffects:Disconnect()
+   getgenv().Noclip:Disconnect()
+   warn("Closed Thread 1", Thread_Function1.status)
+   warn("Closed Thread 2", Thread_Function1.status)
+   warn("Disconnected ChildAdded {Effects}")
+   warn("Disconnected Stepped {Noclip}")
+   for i, v in pairs(getgenv().OriginalEffects) do
+      v:Clone().Parent = Effects
    end
 end
