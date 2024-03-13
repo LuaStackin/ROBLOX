@@ -108,11 +108,7 @@ getgenv().CTPFUNC = RenderStepped:Connect(function(...)
           Part.CFrame = HRP.CFrame * CFrame.new(0, -4, 0)
           CanAttack = true
        elseif Character:FindFirstChild("HumanoidRootPart") and not Mobs:FindFirstChild(Mob) then
-          CanAttack = false 
-          local SPW = MobSpawns[Mob].Spawns:GetChildren()
-          local HRP = Character.HumanoidRootPart
-          HRP.CFrame = SPW.CFrame * CFrame.new(0, -15, 0)
-          Part.CFrame = HRP.CFrame * CFrame.new(0, -4, 0)          
+          CanAttack = false          
        end
        for i, v in pairs(Drops:GetChildren()) do
           PickupRemote:FireServer(v)
