@@ -25,6 +25,8 @@ local Mob = "Hell Hound" -- (Hell Hound, Cold Mammoth)
 local HitDelay = 0.2 -- seconds
 local MinDistance = 30 -- studs
 local PositionDistance = 24
+
+local DisableEffects = true
 local BreakLoop = false
 
 if getgenv().Settings ~= nil then
@@ -42,6 +44,9 @@ if getgenv().Settings ~= nil then
       PositionDistance = Settings.PositionDistance
       warn("Set Distance:", PositionDistance)
       warn("Set Mininum Distance:", MinDistance)
+   end
+   if Settings.DisableEffects ~= nil then
+      DisableEffects = Settings.DisableEffects
    end
 end
 
@@ -129,19 +134,21 @@ getgenv().AAFK = Idled:Connect(function(...)
      VirtualUser:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)    
 end) 
 
-getgenv().DEffects = WEffects.ChildAdded:Connect(function(Effect)
-    wait(.1)
-    Effect:Destroy()
-end)
+if DisableEffects then
+   getgenv().DEffects = WEffects.ChildAdded:Connect(function(Effect)
+       wait(.1)
+       Effect:Destroy()
+   end)
 
-warn("init 4")
+   warn("init 4")
 
-if not getgenv().OriginalEffects then
-   getgenv().OriginalEffects = Effects:Clone()
-end
+   if not getgenv().OriginalEffects then
+      getgenv().OriginalEffects = Effects:Clone()
+   end
 
-for i, v in pairs(Effects:GetChildren()) do
-   v:Destroy()
+   for i, v in pairs(Effects:GetChildren()) do
+      v:Destroy()
+   end
 end
 
 warn("init 5 - complete")
