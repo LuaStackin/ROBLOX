@@ -69,12 +69,16 @@ local Idled = Client.Idled
 local ThreadCreate = coroutine.create
 local ThreadRun = coroutine.resume
 
-local AttackMob = function(Mob)
-   repeat wait(HitDelay)
+local AttackMob = function(Mob, Root, Part)
+   repeat wait()
+        Root.CFrame = SelectedMob.HumanoidRootPart.CFrame * CFrame.new(0, -PositionDistance, 0)
+        Part.CFrame = Root.CFrame * CFrame.new(0, -4, 0)
 	CombatRemote:FireServer({[1] = Mob}) 
+	wait(HitDelay)
    until 0 >= Mob:GetAttribute("HP") 
    Mob:Destroy()
-   SelectedMob = nil  
+   SelectedMob = nil   
+   warn("Done, Selecting new mob.")
 end
 
 getgenv().MainRuntime = function(...)
@@ -98,7 +102,7 @@ getgenv().MainRuntime = function(...)
           Root.CFrame = SelectedMob.HumanoidRootPart.CFrame * CFrame.new(0, -PositionDistance, 0)
           Part.CFrame = Root.CFrame * CFrame.new(0, -4, 0)
           wait(1)
-          AttackMob(SelectedMob)
+          AttackMob(SelectedMob, Root, Part)
        end
     end
 end
