@@ -149,6 +149,10 @@ getgenv().Noclip = Stepped:Connect(function(...)
        end
     end
 end)
+
+getgenv().Pickup = Drops.ChildAdded:Connect(function(Drop)
+    PickupRemote:FireServer(Drop)
+end)
                   
 if DisableEffects then
    getgenv().DEffects = WEffects.ChildAdded:Connect(function(Effect)
@@ -175,10 +179,12 @@ getgenv().KillSwitch = function(...)
    Thread_Function2.close()
    getgenv().DEffects:Disconnect()
    getgenv().Noclip:Disconnect()
+   getgenv().Pickup:Disconnect()
    warn("Closed Thread 1", Thread_Function1.status)
    warn("Closed Thread 2", Thread_Function1.status)
    warn("Disconnected ChildAdded {Effects}")
    warn("Disconnected Stepped {Noclip}")
+   warn("Disconnected ChildAdded {Pickup}")
    for i, v in pairs(getgenv().OriginalEffects) do
       v:Clone().Parent = Effects
    end
