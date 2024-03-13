@@ -93,6 +93,10 @@ getgenv().CTPFUNC = RenderStepped:Connect(function(...)
        if Character:FindFirstChild("HumanoidRootPart") and Mobs:FindFirstChild(Mob) then
           local HRP = Character.HumanoidRootPart
           local Mob = Mobs[Mob] 
+          if Mob:GetAttribute("HP") <= 0  then
+             Mob:Destroy()
+             return
+          end
           HRP.CFrame = Mob.HumanoidRootPart.CFrame * CFrame.new(0, -PositionDistance, 0)
           Part.CFrame = HRP.CFrame * CFrame.new(0, -4, 0)
        elseif Character:FindFirstChild("HumanoidRootPart") and not Mobs:FindFirstChild(Mob) then
