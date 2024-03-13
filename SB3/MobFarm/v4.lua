@@ -136,8 +136,9 @@ getgenv().Pickup = Drops.ChildAdded:Connect(function(Drop)
        warn("Picked Up:", Drop)
     end
 end)
-                  
-if true then
+
+local disable = false
+if disable then
    getgenv().DEffects = WEffects.ChildAdded:Connect(function(Effect)
        wait(.1)
        Effect:Destroy()
