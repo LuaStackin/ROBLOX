@@ -109,7 +109,7 @@ getgenv().CTPFUNC = RenderStepped:Connect(function(...)
           CanAttack = true
        elseif Character:FindFirstChild("HumanoidRootPart") and not Mobs:FindFirstChild(Mob) then
           CanAttack = false 
-          local SPW = MobSpawns[Mob].Spawns:GetChildren(1)
+          local SPW = MobSpawns[Mob].Spawns:GetChildren()
           local HRP = Character.HumanoidRootPart
           HRP.CFrame = SPW.CFrame * CFrame.new(0, -15, 0)
           Part.CFrame = HRP.CFrame * CFrame.new(0, -4, 0)          
