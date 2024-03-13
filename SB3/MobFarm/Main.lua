@@ -52,10 +52,9 @@ if getgenv().Settings ~= nil then
    end
    if Settings.DisableEffects ~= nil then
       DisableEffects = Settings.DisableEffects
+      warn("Set Disable Effects:", tostring(DisableEffects))
    end
 end
-
-warn("init 1")
 
 -- Remotes & Other
 
@@ -71,8 +70,6 @@ local Idled = Client.Idled
 
 local ThreadCreate = coroutine.create
 local ThreadRun = coroutine.resume
-
-warn("init 2")
 
 getgenv().SelectMobAndTeleport = function(...)
     if Mobs:FindFirstChild(Mob) then
@@ -120,7 +117,7 @@ getgenv().DamageMob = function(...)
    end
 end
 
-local Thread_Function1 = ThreadRun(ThreadCreate(function(...)
+local Thread_Function1 = ThreadCreate(function(...)
      local Function = getgenv().SelectMobAndTeleport
      while true do
         local Success, Error = pcall(Function)
@@ -129,9 +126,9 @@ local Thread_Function1 = ThreadRun(ThreadCreate(function(...)
         end
         wait()
      end
-end))
+end)
 
-local Thread_Function2 = ThreadRun(ThreadCreate(function(...)
+local Thread_Function2 = ThreadCreate(function(...)
      local Function = getgenv().DamageMob
      while true do
         local Success, Error = pcall(Function)
@@ -140,7 +137,7 @@ local Thread_Function2 = ThreadRun(ThreadCreate(function(...)
         end
         wait()
      end
-end))
+end)
 
 getgenv().Noclip = Stepped:Connect(function(...)
     if Client.Character then
@@ -159,8 +156,6 @@ if DisableEffects then
        Effect:Destroy()
    end)
 
-   warn("init 4")
-
    if not getgenv().OriginalEffects then
       getgenv().OriginalEffects = Effects:Clone()
    end
@@ -169,6 +164,11 @@ if DisableEffects then
       v:Destroy()
    end
 end
+
+ThreadRun(Thread_Function1)
+ThreadRun(Thread_Function2)
+
+warn("Loading Complete.")
                   
 getgenv().KillSwitch = function(...)
    Thread_Function1.close()
