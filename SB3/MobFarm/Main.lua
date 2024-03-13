@@ -92,7 +92,7 @@ getgenv().SelectMobAndTeleport = function(...)
        end
        if Root ~= nil then
           Root.CFrame = SelectedMob.HumanoidRootPart.CFrame * CFrame.new(0, -PositionDistance, 0)
-          Part.CFrame = HRP.CFrame * CFrame.new(0, -4, 0)
+          Part.CFrame = Root.CFrame * CFrame.new(0, -4, 0)
           wait()
           CanAttack = true
        end
