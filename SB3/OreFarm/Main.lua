@@ -65,6 +65,11 @@ if getgenv().AAFK then
    getgenv().AAFK:Disconnect()
 end
 
+if getgenv().AutoPickup then
+   warn("Auto Pickup, Disconnected!")
+   getgenv().AutoPickup:Disconnect()
+end
+
 if getgenv().CMOFUNC then
    getgenv().CMOFUNC()
 end 
@@ -79,9 +84,6 @@ getgenv().CTPFUNC = RenderStepped:Connect(function(...)
           Part.CFrame = HRP.CFrame * CFrame.new(0, -5, 0)
        end
     end  
-    for i, v in pairs(Drops:GetChildren()) do
-       PickupRemote:FireServer(v) 
-    end
 end)
 
 getgenv().CNCFUNC = Stepped:Connect(function(...)
@@ -96,13 +98,17 @@ getgenv().CMOFUNC = function(...)
    BreakLoop = true
 end
 
-warn(getgenv().AAFK)
-
 getgenv().AAFK = Idled:Connect(function(...)
      VirtualUser:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
      wait(1)
      VirtualUser:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)    
 end) 
+
+getgenv().AutoPickup = Drops.ChildAdded:Connect(function(Drop)
+    wait(2)
+    warn("Picked Up:", tostring(Drop))
+    PickupRemote:FireServer(Drop)
+end)
 
 warn("init 4 - complete")
 
