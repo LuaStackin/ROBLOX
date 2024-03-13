@@ -10,6 +10,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 -- variables
 
 local Client = Players.LocalPlayer
+local CanAttack = false
 
 -- locations
 
@@ -99,12 +100,15 @@ getgenv().CTPFUNC = RenderStepped:Connect(function(...)
           local HRP = Character.HumanoidRootPart
           local Mob = Mobs[Mob] 
           if Mob:GetAttribute("HP") <= 0  then
-             Mob:Destroy()
+             CanAttack = false
+             Mob.Parent = workspace
              return
           end
           HRP.CFrame = Mob.HumanoidRootPart.CFrame * CFrame.new(0, -PositionDistance, 0)
           Part.CFrame = HRP.CFrame * CFrame.new(0, -4, 0)
+          CanAttack = true
        elseif Character:FindFirstChild("HumanoidRootPart") and not Mobs:FindFirstChild(Mob) then
+          CanAttack = false 
           local SPW = MobSpawns[Mob].Spawns:GetChildren(1)
           local HRP = Character.HumanoidRootPart
           HRP.CFrame = SPW.CFrame * CFrame.new(0, -15, 0)
@@ -160,7 +164,7 @@ while true do
       break;
    end
    local Success, Error = pcall(function(...)
-       if Mobs:FindFirstChild(Mob) then
+       if Mobs:FindFirstChild(Mob) and CanAttack then
           local Mob = Mobs:FindFirstChild(Mob)
 
           local Mob_Root = nil
