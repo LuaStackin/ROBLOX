@@ -151,6 +151,7 @@ getgenv().Noclip = Stepped:Connect(function(...)
 end)
 
 getgenv().Pickup = Drops.ChildAdded:Connect(function(Drop)
+    wait(2)
     PickupRemote:FireServer(Drop)
 end)
                   
