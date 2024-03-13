@@ -105,7 +105,7 @@ getgenv().CTPFUNC = RenderStepped:Connect(function(...)
           HRP.CFrame = Mob.HumanoidRootPart.CFrame * CFrame.new(0, -PositionDistance, 0)
           Part.CFrame = HRP.CFrame * CFrame.new(0, -4, 0)
        elseif Character:FindFirstChild("HumanoidRootPart") and not Mobs:FindFirstChild(Mob) then
-          local SPW = MobSpawns[Mob]
+          local SPW = MobSpawns[Mob]:GetChildren()[1]
           local HRP = Character.HumanoidRootPart
           HRP.CFrame = SPW.CFrame * CFrame.new(0, -15, 0)
           Part.CFrame = HRP.CFrame * CFrame.new(0, -4, 0)          
