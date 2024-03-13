@@ -10,6 +10,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 -- variables
 
 local Client = Players.LocalPlayer
+local CanAttack = false
 
 -- locations
 
@@ -82,6 +83,7 @@ getgenv().SelectMobAndTeleport = function(...)
        if 0 >= SelectedMob:GetAttribute("HP") then
           SelectedMob:Destroy()
           SelectedMob = nil
+          CanAttack = false
           return
        end
        if Client.Character then
@@ -110,7 +112,7 @@ getgenv().DamageMob = function(...)
       end
       if Root ~= nil then
          local DistanceFromMob = (Root.Position - SelectedMob.HumanoidRootPart.Position).magnitude
-         if MinDistance >= DistanceFromMob then
+         if (MinDistance >= DistanceFromMob and CanAttack) then
             wait(HitDelay)
             CombatRemote:FireServer({[1] = SelectedMob})
          end
