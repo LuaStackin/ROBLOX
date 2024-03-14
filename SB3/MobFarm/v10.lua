@@ -83,6 +83,7 @@ local AttackMob = function(Mob, Root, Part)
 end
 
 getgenv().MainRuntime = function(...)
+    warn(Mobs, Mobs:FindFirstChild(Mob))
     if Mobs:FindFirstChild(Mob) then
        SelectedMob = Mobs:FindFirstChild(Mob)
        warn(Mobs:FindFirstChild(Mob), SelectedMob)
