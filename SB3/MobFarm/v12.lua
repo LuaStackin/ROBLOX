@@ -136,8 +136,7 @@ getgenv().Pickup = Drops.ChildAdded:Connect(function(Drop)
     end
 end)
 
-local disable = false
-if disable then
+if DisableEffects then
    getgenv().DEffects = WEffects.ChildAdded:Connect(function(Effect)
        wait(.1)
        Effect:Destroy()
@@ -158,7 +157,7 @@ warn("Loading Complete.")
                   
 getgenv().KillSwitch = function(...)
    ThreadClose(Thread_Function1)
-   if disable then
+   if DisableEffects then
       getgenv().DEffects:Disconnect()
       for i, v in pairs(getgenv().OriginalEffects) do
          v:Clone().Parent = Effects
