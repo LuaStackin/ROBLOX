@@ -30,7 +30,7 @@ local DisableEffects = true
 local BreakLoop = false
 
 if getgenv().KillSwitch then
-   getgenv().KillSwitch()
+   pcall(getgenv().KillSwitch)
 end
 
 if getgenv().Settings ~= nil then
