@@ -87,17 +87,13 @@ getgenv().MainRuntime = function(...)
     end
     if SelectedMob ~= nil then
        local Root = nil
-       if 0 >= SelectedMob:GetAttribute("HP") then
-          SelectedMob:Destroy()
-          SelectedMob = nil
-          return
-       end
        if Client.Character then
           local Character = Client.Character
           if Character:FindFirstChild("HumanoidRootPart") then
              Root = Character:FindFirstChild("HumanoidRootPart")
           end
        end
+       warn(Root, Client.Character)
        if Root ~= nil then
           Root.CFrame = SelectedMob.HumanoidRootPart.CFrame * CFrame.new(0, -PositionDistance, 0)
           Part.CFrame = Root.CFrame * CFrame.new(0, -4, 0)
