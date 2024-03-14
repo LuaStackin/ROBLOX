@@ -91,10 +91,8 @@ local AttackMob = function(Mob, Root, Part)
 end
 
 getgenv().MainRuntime = function(...)
-    warn(Mobs, Mobs:FindFirstChild(Mob))
     if Mobs:FindFirstChild(Mob) then
        SelectedMob = Mobs:FindFirstChild(Mob)
-       warn(Mobs:FindFirstChild(Mob), SelectedMob)
     end
     if SelectedMob ~= nil then
        local Root = nil
@@ -104,7 +102,6 @@ getgenv().MainRuntime = function(...)
              Root = Character:FindFirstChild("HumanoidRootPart")
           end
        end
-       warn(Root, Client.Character)
        if Root ~= nil then
           Root.CFrame = SelectedMob.HumanoidRootPart.CFrame * CFrame.new(0, -PositionDistance, 0)
           Part.CFrame = Root.CFrame * CFrame.new(0, -4, 0)
