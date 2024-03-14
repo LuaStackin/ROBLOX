@@ -85,6 +85,7 @@ end
 getgenv().MainRuntime = function(...)
     if Mobs:FindFirstChild(Mob) then
        SelectedMob = Mobs:FindFirstChild(Mob)
+       warn(Mobs:FindFirstChild(Mob), SelectedMob)
     end
     if SelectedMob ~= nil then
        local Root = nil
