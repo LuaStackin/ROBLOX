@@ -29,8 +29,11 @@ local PositionDistance = 28
 local DisableEffects = true
 local BreakLoop = false
 
-if getgenv().KillSwitch then
-   pcall(getgenv().KillSwitch)
+if getgenv().KillSwitch ~= nil then
+   local Success, Error = pcall(getgenv().KillSwitch)
+   if not Success then
+      warn("Error Kill Switching:", Error)
+   end
 end
 
 if getgenv().Settings ~= nil then
