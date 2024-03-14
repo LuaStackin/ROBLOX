@@ -133,13 +133,18 @@ getgenv().Noclip = Stepped:Connect(function(...)
     end
 end)
 
-getgenv().Pickup = Drops.ChildAdded:Connect(function(Drop)
+local PickupFunc = function(Drop)
     wait(2)
     if tostring(Drop):lower() == (Item):lower() or tostring(Item):lower() == "all" then
        PickupRemote:FireServer(Drop)
        warn("Picked Up:", Drop)
     end
-end)
+end
+
+getgenv().Pickup = Drops.ChildAdded:Connect(PickupFunc)
+for i, v in pairs(Drops:GetChildren()) do
+   PickupFunc(v)
+end
 
 if DisableEffects then
    getgenv().DEffects = WEffects.ChildAdded:Connect(function(Effect)
