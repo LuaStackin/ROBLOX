@@ -21,6 +21,7 @@ local MobSpawns = workspace.MobSpawns
 -- Settings
 
 local Mob = "Razor Boar" -- (Hell Hound, Cold Mammoth)
+local Item = "All"
 local HitDelay = 0.2 -- seconds
 local MinDistance = 43 -- studs
 local PositionDistance = 28
@@ -37,6 +38,10 @@ if getgenv().Settings ~= nil then
    if Settings.Mob ~= nil then
       Mob = Settings.Mob  
       warn("Set Mob:", Mob)
+   end
+   if Settings.Item ~= nil then
+      Item = Settings.Item  
+      warn("Set Item:", Item)
    end
    if Settings.AttackDelay ~= nil then
       HitDelay = Settings.AttackDelay
@@ -130,7 +135,7 @@ end)
 
 getgenv().Pickup = Drops.ChildAdded:Connect(function(Drop)
     wait(2)
-    if tostring(Drop):lower() == ("boartusk") then
+    if tostring(Drop):lower() == (Item):lower() or tostring(Item):lower() == "all" then
        PickupRemote:FireServer(Drop)
        warn("Picked Up:", Drop)
     end
