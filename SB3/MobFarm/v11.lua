@@ -158,15 +158,15 @@ warn("Loading Complete.")
                   
 getgenv().KillSwitch = function(...)
    ThreadClose(Thread_Function1)
-   if getgenv().DEffects then
+   if disable then
       getgenv().DEffects:Disconnect()
+      for i, v in pairs(getgenv().OriginalEffects) do
+         v:Clone().Parent = Effects
+      end
    end
    getgenv().Noclip:Disconnect()
    getgenv().Pickup:Disconnect()
    warn("Disconnected ChildAdded {Effects}")
    warn("Disconnected Stepped {Noclip}")
    warn("Disconnected ChildAdded {Pickup}")
-   for i, v in pairs(getgenv().OriginalEffects) do
-      v:Clone().Parent = Effects
-   end
 end
