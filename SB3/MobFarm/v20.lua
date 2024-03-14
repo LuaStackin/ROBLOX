@@ -144,11 +144,7 @@ local PickupFunc = function(Drop)
     end
 end
 
-getgenv().Pickup = Drops.ChildAdded:Connect(PickupFunc)
-for i, v in pairs(Drops:GetChildren()) do
-   local PT = ThreadCreate(PickupFunc)
-   ThreadRun(PT, v)
-end
+loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaStackin/ROBLOX/main/SB3/MobFarm/Pickup.lua"))()
 
 if DisableEffects then
    getgenv().DEffects = WEffects.ChildAdded:Connect(function(Effect)
