@@ -133,16 +133,11 @@ getgenv().Noclip = Stepped:Connect(function(...)
     end
 end)
 
-local PickupFunc = function(Drop)
-    warn(tostring(Drop):lower(), Item:lower())
-    wait(2)
-    if tostring(Drop):lower() == (Item):lower() or tostring(Item):lower() == "all" then
-       PickupRemote:FireServer(Drop)
-       warn("Picked Up:", Drop)
-    else
-       Drop:Destroy()
-    end
-end
+getgenv().AntiAFK = Idled:Connect(function(...)
+     VirtualUser:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+     wait(1)
+     VirtualUser:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)    
+end) 
 
 loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaStackin/ROBLOX/main/SB3/MobFarm/Pickup.lua"))()
 
@@ -172,10 +167,12 @@ getgenv().KillSwitch = function(...)
       for i, v in pairs(getgenv().OriginalEffects) do
          v:Clone().Parent = Effects
       end
+      warn("Disconnected ChildAdded {Effects}")
    end
    getgenv().Noclip:Disconnect()
    getgenv().Pickup:Disconnect()
-   warn("Disconnected ChildAdded {Effects}")
+   getgenv().AntiAFK:Disconnect()
+   warn("Disconnected ChildAdded {Anti-AFK}")
    warn("Disconnected Stepped {Noclip}")
    warn("Disconnected ChildAdded {Pickup}")
 end
