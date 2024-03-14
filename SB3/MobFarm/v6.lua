@@ -67,6 +67,7 @@ local Stepped = RunService.Stepped
 local Idled = Client.Idled
 
 local ThreadCreate = coroutine.create
+local ThreadClose = coroutine.close
 local ThreadRun = coroutine.resume
 
 local AttackMob = function(Mob, Root, Part)
@@ -154,7 +155,7 @@ ThreadRun(Thread_Function1)
 warn("Loading Complete.")
                   
 getgenv().KillSwitch = function(...)
-   Thread_Function1.close()
+   ThreadClose(Thread_Function1)
    getgenv().DEffects:Disconnect()
    getgenv().Noclip:Disconnect()
    getgenv().Pickup:Disconnect()
