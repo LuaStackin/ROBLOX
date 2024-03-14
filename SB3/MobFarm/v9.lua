@@ -157,7 +157,9 @@ warn("Loading Complete.")
                   
 getgenv().KillSwitch = function(...)
    ThreadClose(Thread_Function1)
-   getgenv().DEffects:Disconnect()
+   if getgenv().DEffects then
+      getgenv().DEffects:Disconnect()
+   end
    getgenv().Noclip:Disconnect()
    getgenv().Pickup:Disconnect()
    warn("Disconnected ChildAdded {Effects}")
