@@ -139,6 +139,8 @@ local PickupFunc = function(Drop)
     if tostring(Drop):lower() == (Item):lower() or tostring(Item):lower() == "all" then
        PickupRemote:FireServer(Drop)
        warn("Picked Up:", Drop)
+    else
+       Drop:Destroy()
     end
 end
 
