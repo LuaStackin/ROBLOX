@@ -28,7 +28,7 @@ end
 
 -- main
 
-if PlayerGui:FindFirstChild("LoadingScreen") then
+if PlayerGui:FindFirstChild("LoadingScreen") and not PlayerGui:FindFirstChild("LoadingScreen1") then
    local Play = PlayerGui:FindFirstChild("LoadingScreen"):WaitForChild("Frames"):WaitForChild("Main"):WaitForChild("Play")
    click(Play, false)
    return true
