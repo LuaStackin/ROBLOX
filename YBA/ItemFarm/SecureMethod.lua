@@ -48,6 +48,6 @@ end))
 
 Secure.OnClientInvoke = Secure2
 if LoadingScreen ~= nil then
-   local Play = LS:WaitForChild("Frames"):WaitForChild("Main"):WaitForChild("Play")
+   local Play = LoadingScreen:WaitForChild("Frames"):WaitForChild("Main"):WaitForChild("Play")
    click(Play, false)
 end
