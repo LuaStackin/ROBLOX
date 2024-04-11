@@ -18,7 +18,14 @@ local Players = game:GetService("Players")
 
 local Client = Players.LocalPlayer
 local PlayerGui = Client:WaitForChild("PlayerGui")
-local LoadingScreen = PlayerGui:WaitForChild("LoadingScreen", 5)
+
+local LoadingAsset = PlayerGui:WaitForChild("LoadingScreen1", 3)
+
+if LoadingAsset ~= nil then
+    click(LoadingAsset.SkipCutscene, false)
+end
+
+local MainMenu = PlayerGui:WaitForChild("LoadingScreen", 3)
 
 -- functions
 
