@@ -26,7 +26,7 @@ local function click(button, manual)
     print("Clicked", button)
 end
 
--- main
+-- main lol
 
 if PlayerGui:FindFirstChild("LoadingScreen") and not PlayerGui:FindFirstChild("LoadingScreen1") then
    local Play = PlayerGui:FindFirstChild("LoadingScreen"):WaitForChild("Frames"):WaitForChild("Main"):WaitForChild("Play")
