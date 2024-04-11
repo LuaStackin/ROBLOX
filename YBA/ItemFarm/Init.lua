@@ -12,7 +12,16 @@ end
 
 loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaStackin/ROBLOX/main/YBA/ItemFarm/TpBypass.lua"))()
 getgenv().RF.OnClientInvoke = getgenv().OCI
-loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaStackin/ROBLOX/main/YBA/ItemFarm/AutoMenu.lua"))()
+if game.Players.LocalPlayer.Character then
+   local Remote = game.Players.LocalPlayer.Character:WaitForChild("RemoteEvent", 5)
+   if Remote ~= nil then
+      Remote:FireServer("PressedPlay")
+   else
+      loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaStackin/ROBLOX/main/YBA/ItemFarm/AutoMenu.lua"))()
+   end
+else
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaStackin/ROBLOX/main/YBA/ItemFarm/AutoMenu.lua"))()
+end
 
 if getgenv().HopSettings["AutoHop"] then
    wait(getgenv().HopSettings["HopWait"])
