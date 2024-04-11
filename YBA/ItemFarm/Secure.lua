@@ -3,6 +3,12 @@
 if not game:IsLoaded() then game.Loaded:Wait() end
 if game.GameId ~= 1016936714 then return end
 
+-- settings
+
+local Items = getgenv().Settings["Items"]
+local Secure = getgenv().Settings["Secure1"]
+local Secure2 = getgenv().Settings["Secure2"]
+
 -- services 
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -13,9 +19,6 @@ local Players = game:GetService("Players")
 local Client = Players.LocalPlayer
 local PlayerGui = Client:WaitForChild("PlayerGui")
 local LoadingScreen = PlayerGui:WaitForChild("LoadingScreen", 5)
-
-local Items = _G.Settings["Items"] or {"lucky arrow", "lucky stone mask"}
-local ItemSpawn = game.ReplicatedStorage:WaitForChild("ItemSpawn")
 
 -- functions
 
@@ -41,9 +44,10 @@ TPBypass = hookfunction(getrawmetatable(game).__namecall, newcclosure(function(s
      return TPBypass(self, ...)
 end))
 
+-- main
+
+Secure.OnClientInvoke = Secure2
 if LoadingScreen ~= nil then
-   return false, nil, ItemSpawn, function(...) 
-      return 
-   end
+   local Play = LS:WaitForChild("Frames"):WaitForChild("Main"):WaitForChild("Play")
+   click(Play, false)
 end
-return true, LoadingScreen, ItemSpawn, click
