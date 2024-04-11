@@ -16,6 +16,12 @@ if game.Players.LocalPlayer.Character then
    local Remote = game.Players.LocalPlayer.Character:WaitForChild("RemoteEvent", 5)
    if Remote ~= nil then
       Remote:FireServer("PressedPlay")
+      if game.Players.LocalPlayer.PlayerGui:FindFirstChild("LoadingScreen1") then
+         game.Players.LocalPlayer.PlayerGui:FindFirstChild("LoadingScreen1"):Destroy()
+      end
+      if game.Players.LocalPlayer.PlayerGui:FindFirstChild("LoadingScreen") then
+         game.Players.LocalPlayer.PlayerGui:FindFirstChild("LoadingScreen"):Destroy()
+      end
    else
       loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaStackin/ROBLOX/main/YBA/ItemFarm/AutoMenu.lua"))()
    end
