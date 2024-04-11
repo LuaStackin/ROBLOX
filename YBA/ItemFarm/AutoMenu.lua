@@ -36,8 +36,11 @@ end
 
 local AssetLoading = PlayerGui:WaitForChild("LoadingScreen1", 3)
 if AssetLoading ~= nil then
-   local Skip =  PlayerGui:WaitForChild("LoadingScreen1"):WaitForChild("Frame"):WaitForChild("LoadingFrame"):WaitForChild("BarFrame"):WaitForChild("Skip")
-   click(Skip, false)
+   for i, v in pairs(AssetLoading:GetDescendants()) do
+      if v:IsA("ImageButton") or v:IsA("TextButton") then
+         click(v, false)
+      end
+   end
    local Play = PlayerGui:WaitForChild("LoadingScreen"):WaitForChild("Frames"):WaitForChild("Main"):WaitForChild("Play")
    click(Play, false)
 end
