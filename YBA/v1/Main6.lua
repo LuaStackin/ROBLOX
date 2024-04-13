@@ -91,6 +91,9 @@ local ExtraFunctionTable = {
 	end,
 	["LuckyStopper"] = function(...)
 		local Success, Error = pcall(function(...)
+			if getgenv()["Settings"]["HopSettings"]["Enabled"] == false then
+			   return false, "Not Enabled"
+			end
 			if ServiceTable["Players"].LocalPlayer.Backpack then
 				local A = {["Backpack"] = ServiceTable["Players"].LocalPlayer.Backpack}
 				A["Backpack"].ChildAdded:Connect(function(Item)
