@@ -161,10 +161,11 @@ if getgenv()["Settings"]["Items"] ~= "Default" then
 			NotCollected = NotCollected .. tostring(i) .. ", "
 		end
 	end
+	warn(NotCollected)
 	if string.len(NotCollected) < 2 then
 		NotCollected = "        "
 	end
-	warn("The following items are not being collected:", NotCollected:sub(1, string.len(NotCollected - 2)))
+	warn("The following items are not being collected:", NotCollected:sub(1, (string.len(NotCollected) - 2)))
 else
 	warn("Item Default's Set")
 end
