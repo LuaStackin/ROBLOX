@@ -98,16 +98,20 @@ local FunctionTable = {
 	["HopFunction"] = function(...)
 		local A = getgenv()["Settings"]["HopSettings"]
 		if A["Enabled"] then
+			warn("Enabled")
 			wait(A["HopTimer"]) 
 			if not A["Cancel"] then
+				warn("Yes")
 				return true, "Hopping Servers"
 			else
+				warn("No")
 				return false, "Server Hop Stopped"
 			end
 		end
 	end,
 	["HopControl"] = function(HF)
 		local Success, Reason = HF()
+		warn(Success, Reason)
 		if not Success then
 			repeat wait() until (getgenv()["Settings"]["HopFix"] ~= nil)
 			getgenv()["Settings"]["HopSettings"]["Cancel"] = false
