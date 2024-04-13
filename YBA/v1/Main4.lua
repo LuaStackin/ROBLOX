@@ -153,19 +153,18 @@ if getgenv()["Settings"]["Items"] ~= "Default" then
 			value = true
 		end
 		TableTable["ItemTable"][item] = value
-		warn("Item", item, "Set to Value", tostring(value))
 	end
-	local NotCollected = ""
+	local NotCollected = {}
+	local Collecting = {}
 	for i, v in pairs(TableTable["ItemTable"]) do
 	   	if v == false then
-			NotCollected = NotCollected .. tostring(i) .. ", "
+			table.insert(NotCollected, tostring(i))
+		elseif v == true 
+			table.insert(Collecting, tostring(i))
 		end
 	end
-	warn(NotCollected)
-	if string.len(NotCollected) < 2 then
-		NotCollected = "        "
-	end
-	warn("The following items are not being collected:", NotCollected:sub(1, (string.len(NotCollected) - 2)))
+	warn("The following items are not being collected:", table.concat(NotCollected, ", "))
+	warn("Collecting these items:", table.concat(Collecting, ", "))
 else
 	warn("Item Default's Set")
 end
