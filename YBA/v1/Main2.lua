@@ -97,15 +97,11 @@ local FunctionTable = {
 	end,
 	["HopFunction"] = function(...)
 		local A = getgenv()["Settings"]["HopSettings"]
-		warn(A["Enabled"], getgenv()["Settings"]["HopSettings"])
 		if A["Enabled"] then
-			warn("Enabled")
 			wait(A["HopTimer"]) 
 			if not A["Cancel"] then
-				warn("Yes")
 				return true, "Hopping Servers"
 			else
-				warn("No")
 				return false, "Server Hop Stopped"
 			end
 		end
@@ -159,11 +155,16 @@ if getgenv()["Settings"]["Items"] ~= "Default" then
 		TableTable["ItemTable"][item] = value
 		warn("Item", item, "Set to Value", tostring(value))
 	end
+	local NotCollected = ""
 	for i, v in pairs(TableTable["ItemTable"]) do
-		if not v then
-			warn("Item", tostring(i), "Set to Value", tostring(v))
+	   	if v == false then
+			NotCollected = NotCollected .. tostring(i) .. ", "
 		end
 	end
+	if string.len(NotCollected) < 2 then
+		NotCollected = "        "
+	end
+	warn("The following items are not being collected:", NotCollected:sub(1, string.len(NotCollected - 2)))
 else
 	warn("Item Default's Set")
 end
