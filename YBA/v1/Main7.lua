@@ -143,6 +143,7 @@ local FunctionTable = {
 		local A = getgenv()["Settings"]["HopSettings"]
 		if A["Enabled"] then
 			wait(A["HopTimer"]) 
+			warn(A["Cancel"], "HRSC")
 			if not A["Cancel"] then
 				return true, "Hopping Servers"
 			else
@@ -152,15 +153,16 @@ local FunctionTable = {
 	end,
 	["HopControl"] = function(HF)
 		local FS, Success, Reason = pcall(HF)
+		warn(FS, Success, Reason, "WHATR")
 		if not Success then
 			repeat wait() until (getgenv()["Settings"]["HopFix"] ~= nil)
 			getgenv()["Settings"]["HopSettings"]["Cancel"] = false
 			local Success, Reason = HF()
 			if Success then
-				loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaStackin/ROBLOX/main/YBA/v1/Hop.lua"))().ServerHop()
+				--loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaStackin/ROBLOX/main/YBA/v1/Hop.lua"))().ServerHop()
 			end
 		else
-			loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaStackin/ROBLOX/main/YBA/v1/Hop.lua"))().ServerHop()
+			--loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaStackin/ROBLOX/main/YBA/v1/Hop.lua"))().ServerHop()
 		end
 	end
 }
