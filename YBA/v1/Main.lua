@@ -227,7 +227,9 @@ ITable["ItemSpawner"].OnClientInvoke = ITable["ItemFunction"]
 Thread = coroutine.create(FunctionTable["HopControl"])
 coroutine.resume(Thread, FunctionTable["HopFunction"])
 
-RSuccess, RError = ExtraFunctionTable["RegisterPlaying"]()
+RThread = coroutine.create(ExtraFunctionTable["RegisterPlaying"])
+RSuccess, RError = coroutine.resume(RThread)
+
 if not RSuccess then
 	warn("PRegister Error:", RError)
 else
