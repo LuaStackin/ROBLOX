@@ -26,7 +26,7 @@ elseif getgenv()["Settings"] ~= nil then
 					end
 				end
 			else
-				for z, x in pairs(DefaultSettings[i]) do
+				for z, x in pairs(DefaultSettings) do
 					if getgenv()["Settings"][z] == nil then
 						getgenv()["Settings"][z] = x
 						warn(i, "was missing so it was replaced with the default value of", x)
