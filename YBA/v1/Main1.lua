@@ -1,15 +1,38 @@
+local DefaultSettings = {
+	["HopSettings"] = {
+		["Enabled"] = false,
+		["HopTimer"] = 20,
+		["Cancel"] = false
+	},
+	["Callback"] = function(Item)
+		warn(Item, "Collected!")
+	end,
+	["Items"] = {
+	 ["Default"] = true
+	},
+	["SpawnLogger"] = true
+}
+
 if getgenv()["Settings"] == nil then
-	getgenv()["Settings"] = {
-		["HopSettings"] = {
-			["Enabled"] = false,
-			["HopTimer"] = 20,
-			["Cancel"] = false
-		},
-		["Callback"] = function(Name)
-			warn(Name, "Collected!")
-		end,
-		["Items"] = "Default"
-	}
+	getgenv()["Settings"] = DefaultSettings
+elseif getgenv()["Settings"] ~= nil then
+	for i, v in pairs(getgenv()["Settings"]) do
+		if DefaultSettings[i] ~= nil then
+			if type(v) == "table" then
+				for z, x in pairs(DefaultSettings[i]) do
+					if getgenv()["Settings"][z] == nil then
+						getgenv()["Settings"][z] = x
+						warn(z, "was missing from", i, "so it was replaced with the default value of", x)
+					end
+				end
+			else
+				if getgenv()["Settings"][i] == nil then
+					getgenv()["Settings"][i] = DefaultSettings[i]
+					warn(i, "was missing so it was replaced with the default value of", DefaultSettings[i])
+				end
+			end
+		end
+	end
 end
 
 local Hook
@@ -133,10 +156,11 @@ local ITable = {
 				local N = Args[2]["Replica"]
 				local C = Args[2]["CFrame"]
 				local P = Args[2]["CD"]
+				if Settings["SpawnLogger"] == true then
+					warn(N, "Spawned! Collecting:", tostring(TableTable["ItemTable"][tostring(N)] == true))
+				end
 				if TableTable["ItemTable"][tostring(N)] == true then
 					FunctionTable["QueueFunction"](N, C, P)
-				else
-					warn(N, "Not Being Collected!")
 				end
 			end
 		end)
@@ -147,7 +171,7 @@ local ITable = {
 	end
 }
 
-if getgenv()["Settings"]["Items"] ~= "Default" then
+if getgenv()["Settings"]["Items"]["Default"] == false then
 	for item, value in pairs(getgenv()["Settings"]["Items"]) do
 		if value ~= false and value ~= true then
 			value = true
@@ -157,14 +181,15 @@ if getgenv()["Settings"]["Items"] ~= "Default" then
 	local NotCollected = {}
 	local Collecting = {}
 	for i, v in pairs(TableTable["ItemTable"]) do
-	   	if v == false then
+		if v == false then
 			table.insert(NotCollected, tostring(i))
 		elseif v == true then
 			table.insert(Collecting, tostring(i))
 		end
 	end
-	warn("The following items are not being collected:", table.concat(NotCollected, ", "))
-	warn("Collecting these items:", table.concat(Collecting, ", "))
+	warn("The following items are not being collected:", table.concat(NotCollected, "\n"))
+	warn("")
+	warn("Collecting these items:", table.concat(Collecting, "\n"))
 else
 	warn("Item Default's Set")
 end
