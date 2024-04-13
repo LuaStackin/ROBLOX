@@ -181,7 +181,9 @@ local ITable = {
 					if tostring(N) == "Lucky Arrow" or tostring(N) == "Lucky Stone Mask" or tostring(N) == "Rokakaka" then
 						warn("Found Lucky, Stopped Hopping for 30 seconds!")
 						getgenv()["Settings"]["HopSettings"]["Cancel"] = true
-						ExtraFunctionTable["LuckyStopper"]()
+							
+						local lthr = coroutine.create(ExtraFunctionTable["LuckyStopper"])
+						coroutine.resume(lthr)
 					end
 				end
 				if TableTable["ItemTable"][tostring(N)] == true then
