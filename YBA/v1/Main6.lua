@@ -152,8 +152,10 @@ if getgenv()["Settings"]["Items"] ~= "Default" then
 		if value ~= false and value ~= true then
 			value = true
 		end
+		warn(item, value)
 		TableTable["ItemTable"][item] = value
 	end
+	warn("wow")
 	local NotCollected = {}
 	local Collecting = {}
 	warn(NotCollected, Collecting, 1)
