@@ -154,7 +154,7 @@ local FunctionTable = {
 	["HopControl"] = function(HF)
 		local FS, Success, Reason = pcall(HF)
 		if not Success then
-			repeat wait() until (getgenv()["Settings"]["HopFix"] ~= nil)
+			repeat wait() until (getgenv()["Settings"]["HopSettings"]["HopFix"] ~= nil)
 			warn("Time Elapsed, Hopping Servers now..")
 			if true then
 				loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaStackin/ROBLOX/main/YBA/v1/Hop.lua"))().ServerHop()
