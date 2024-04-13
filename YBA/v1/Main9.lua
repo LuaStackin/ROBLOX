@@ -157,6 +157,7 @@ local FunctionTable = {
 		warn(FS, Success, Reason, "WHATR")
 		if not Success then
 			repeat wait() until (getgenv()["Settings"]["HopFix"] ~= nil)
+			warn("Fixed, now we are hopping!")
 			getgenv()["Settings"]["HopSettings"]["Cancel"] = false
 			local Success, Reason = HF()
 			if Success then
