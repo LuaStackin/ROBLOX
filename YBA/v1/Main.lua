@@ -238,9 +238,7 @@ end
 
 warn("Loading Search Function...")
 while true do
-	local SFSuccess, SFError = pcall(FunctionTable["SearchFunction"], function(Name)
-		warn(Name)
-	end)
+	local SFSuccess, SFError = pcall(FunctionTable["SearchFunction"], getgenv()["Settings"]["Callback"])
 	if not SFSuccess then
 		warn("QSystem Error:", SFError)
 	end
