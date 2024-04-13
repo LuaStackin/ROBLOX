@@ -10,7 +10,8 @@ local DefaultSettings = {
 	["Items"] = {
 	 ["Default"] = true
 	},
-	["SpawnLogger"] = true
+	["SpawnLogger"] = true,
+	["StopAtLucky"] = true
 }
 
 if getgenv()["Settings"] == nil then
@@ -87,6 +88,21 @@ local ExtraFunctionTable = {
 			end
 		end)
 		return Success, (Error or "Success") 
+	end,
+	["LuckyStopper"] = function(...)
+		local Success, Error = pcall(function(...)
+			if ServiceTable["Players"].LocalPlayer.Backpack then
+				local A = {["Backpack"] = ServiceTable["Players"].LocalPlayer.Backpack}
+				A["Backpack"].ChildAdded:Connect(function(Item)
+					if tostring(Item) == "Lucky Arrow" or tostring(Item) == "Lucky Stone Mask" then
+						getgenv()["Settings"]["HopSettings"]["Cancel"] = false
+					end
+				end)
+				wait(30)
+				getgenv()["Settings"]["HopSettings"]["Cancel"] = false
+			end
+		end)
+		return Success, (Error or "Success") 
 	end
 }
 
@@ -132,10 +148,7 @@ local FunctionTable = {
 		end
 	end,
 	["HopControl"] = function(HF)
-		warn("wow", HF)
-
 		local FS, Success, Reason = pcall(HF)
-		warn(FS, Success, Reason)
 		if not Success then
 			repeat wait() until (getgenv()["Settings"]["HopFix"] ~= nil)
 			getgenv()["Settings"]["HopSettings"]["Cancel"] = false
@@ -160,6 +173,13 @@ local ITable = {
 				local P = Args[2]["CD"]
 				if Settings["SpawnLogger"] == true then
 					warn(N, "Spawned! Collecting:", tostring(TableTable["ItemTable"][tostring(N)] == true))
+				end
+				if Settings["StopAtLucky"] == true then
+					if tostring(N) == "Lucky Arrow" or tostring(N) == "Lucky Stone Mask" or tostring(N) == "Rokakaka" then
+						warn("Found Lucky, Stopped Hopping for 30 seconds!")
+						ExtraFunctionTable["LuckyStopper"]()
+						getgenv()["Settings"]["HopSettings"]["Cancel"] = true
+					end
 				end
 				if TableTable["ItemTable"][tostring(N)] == true then
 					FunctionTable["QueueFunction"](N, C, P)
@@ -189,9 +209,9 @@ if getgenv()["Settings"]["Items"]["Default"] == false then
 			table.insert(Collecting, tostring(i))
 		end
 	end
-	warn("The following items are not being collected:\n", table.concat(NotCollected, "\n"))
+	warn("\nThe following items are not being collected:\n" .. table.concat(NotCollected, "\n"))
 	warn("")
-	warn("Collecting these items:\n", table.concat(Collecting, "\n"))
+	warn("\nCollecting these items:\n" .. table.concat(Collecting, "\n"))
 else
 	warn("Item Default's Set")
 end
