@@ -110,8 +110,10 @@ local FunctionTable = {
 		end
 	end,
 	["HopControl"] = function(HF)
-		local Success, Reason = HF()
-		warn(Success, Reason)
+		warn("wow", HF)
+		
+		local FS, Success, Reason = pcall(HF)
+		warn(FS, Success, Reason)
 		if not Success then
 			repeat wait() until (getgenv()["Settings"]["HopFix"] ~= nil)
 			getgenv()["Settings"]["HopSettings"]["Cancel"] = false
