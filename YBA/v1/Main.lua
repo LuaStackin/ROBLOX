@@ -178,7 +178,7 @@ local ITable = {
 					warn(N, "Spawned! Collecting:", tostring(TableTable["ItemTable"][tostring(N)] == true))
 				end
 				if Settings["StopAtLucky"] == true then
-					if tostring(N) == "Lucky Arrow" or tostring(N) == "Lucky Stone Mask" or tostring(N) == "Rokakaka" then
+					if tostring(N) == "Lucky Arrow" or tostring(N) == "Lucky Stone Mask" then
 						warn("Found Lucky, Stopped Hopping for 30 seconds!")
 						getgenv()["Settings"]["HopSettings"]["Cancel"] = true
 							
