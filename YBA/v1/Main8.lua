@@ -98,11 +98,12 @@ local ExtraFunctionTable = {
 				local A = {["Backpack"] = ServiceTable["Players"].LocalPlayer.Backpack}
 				A["Backpack"].ChildAdded:Connect(function(Item)
 					if tostring(Item) == "Lucky Arrow" or tostring(Item) == "Lucky Stone Mask" then
-						getgenv()["Settings"]["HopSettings"]["Cancel"] = false
+						getgenv()["Settings"]["HopSettings"]["HopFix"] = true
 					end
 				end)
 				wait(30)
-				getgenv()["Settings"]["HopSettings"]["Cancel"] = false
+				warn("Fixing, Hopping now!")
+				getgenv()["Settings"]["HopSettings"]["HopFix"] = true
 			end
 		end)
 		return Success, (Error or "Success") 
@@ -182,8 +183,8 @@ local ITable = {
 				if Settings["StopAtLucky"] == true then
 					if tostring(N) == "Lucky Arrow" or tostring(N) == "Lucky Stone Mask" or tostring(N) == "Rokakaka" then
 						warn("Found Lucky, Stopped Hopping for 30 seconds!")
-						ExtraFunctionTable["LuckyStopper"]()
 						getgenv()["Settings"]["HopSettings"]["Cancel"] = true
+						ExtraFunctionTable["LuckyStopper"]()
 					end
 				end
 				if TableTable["ItemTable"][tostring(N)] == true then
