@@ -236,6 +236,7 @@ else
 	warn("PRegister Success!")
 end
 
+warn("Loading Search Function...")
 while true do
 	local SFSuccess, SFError = pcall(FunctionTable["SearchFunction"], function(Name)
 		warn(Name)
