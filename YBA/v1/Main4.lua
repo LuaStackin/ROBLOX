@@ -166,8 +166,8 @@ end
 Hook = hookmetamethod(game, "__namecall", FunctionTable["TeleportBypass"])
 ITable["ItemSpawner"].OnClientInvoke = ITable["ItemFunction"]
 
-Thread = coroutine.create(FunctionTable["HopControl"], FunctionTable["HopFunction"])
-coroutine.resume(Thread)
+Thread = coroutine.create(FunctionTable["HopControl"])
+coroutine.resume(Thread, FunctionTable["HopFunction"])
 
 RSuccess, RError = ExtraFunctionTable["RegisterPlaying"]()
 if not RSuccess then
