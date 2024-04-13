@@ -21,14 +21,16 @@ elseif getgenv()["Settings"] ~= nil then
 			if type(v) == "table" then
 				for z, x in pairs(DefaultSettings[i]) do
 					if getgenv()["Settings"][i][z] == nil then
-						getgenv()["Settings"][z] = x
+						getgenv()["Settings"][i][z] = x
 						warn(z, "was missing from", i, "so it was replaced with the default value of", x)
 					end
 				end
 			else
-				if getgenv()["Settings"][i] == nil then
-					getgenv()["Settings"][i] = DefaultSettings[i]
-					warn(i, "was missing so it was replaced with the default value of", DefaultSettings[i])
+				for z, x in pairs(DefaultSettings[i]) do
+					if getgenv()["Settings"][z] == nil then
+						getgenv()["Settings"][z] = x
+						warn(i, "was missing so it was replaced with the default value of", x)
+					end
 				end
 			end
 		end
