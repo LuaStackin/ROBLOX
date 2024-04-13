@@ -112,7 +112,7 @@ local FunctionTable = {
 	end,
 	["HopControl"] = function(HF)
 		warn("wow", HF)
-		
+
 		local FS, Success, Reason = pcall(HF)
 		warn(FS, Success, Reason)
 		if not Success then
@@ -158,6 +158,11 @@ if getgenv()["Settings"]["Items"] ~= "Default" then
 		end
 		TableTable["ItemTable"][item] = value
 		warn("Item", item, "Set to Value", tostring(value))
+	end
+	for i, v in pairs(TableTable["ItemTable"]) do
+		if not v then
+			warn("Item", tostring(i), "Set to Value", tostring(v))
+		end
 	end
 else
 	warn("Item Default's Set")
