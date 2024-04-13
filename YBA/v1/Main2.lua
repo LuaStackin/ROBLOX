@@ -20,7 +20,7 @@ elseif getgenv()["Settings"] ~= nil then
 		if DefaultSettings[i] ~= nil then
 			if type(v) == "table" then
 				for z, x in pairs(DefaultSettings[i]) do
-					if getgenv()["Settings"][z] == nil then
+					if getgenv()["Settings"][i][z] == nil then
 						getgenv()["Settings"][z] = x
 						warn(z, "was missing from", i, "so it was replaced with the default value of", x)
 					end
@@ -187,9 +187,9 @@ if getgenv()["Settings"]["Items"]["Default"] == false then
 			table.insert(Collecting, tostring(i))
 		end
 	end
-	warn("The following items are not being collected:", table.concat(NotCollected, "\n"))
+	warn("The following items are not being collected:\n", table.concat(NotCollected, "\n"))
 	warn("")
-	warn("Collecting these items:", table.concat(Collecting, "\n"))
+	warn("Collecting these items:\n", table.concat(Collecting, "\n"))
 else
 	warn("Item Default's Set")
 end
