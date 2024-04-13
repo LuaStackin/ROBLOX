@@ -97,6 +97,7 @@ local FunctionTable = {
 	end,
 	["HopFunction"] = function(...)
 		local A = getgenv()["Settings"]["HopSettings"]
+		warn(A["Enabled"], getgenv()["Settings"]["HopSettings"])
 		if A["Enabled"] then
 			warn("Enabled")
 			wait(A["HopTimer"]) 
