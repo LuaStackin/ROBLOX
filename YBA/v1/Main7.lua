@@ -152,21 +152,17 @@ if getgenv()["Settings"]["Items"] ~= "Default" then
 		if value ~= false and value ~= true then
 			value = true
 		end
-		warn(item, value)
 		TableTable["ItemTable"][item] = value
 	end
-	warn("wow")
 	local NotCollected = {}
 	local Collecting = {}
-	warn(NotCollected, Collecting, 1)
 	for i, v in pairs(TableTable["ItemTable"]) do
 	   	if v == false then
 			table.insert(NotCollected, tostring(i))
-		elseif v == true 
+		elseif v == true then
 			table.insert(Collecting, tostring(i))
 		end
 	end
-	warn(NotCollected, Collecting, 2)
 	warn("The following items are not being collected:", table.concat(NotCollected, ", "))
 	warn("Collecting these items:", table.concat(Collecting, ", "))
 else
