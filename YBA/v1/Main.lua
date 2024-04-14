@@ -41,7 +41,8 @@ end
 local Hook
 local ServiceTable = {
 	["Players"] = game:GetService("Players"),
-	["RunService"] = game:GetService("RunService")
+	["RunService"] = game:GetService("RunService"),
+        ["VirtualUser"] = game:GetService("VirtualUser")
 }
 
 local TableTable = {
@@ -74,7 +75,7 @@ local ExtraFunctionTable = {
 				end
 			end
 		end)
-		return Success, (Error or "Success")
+		return Success, (Error or "Success Teleport")
 	end,
 	["RegisterPlaying"] = function(...)
 		local Success, Error = pcall(function(...)
@@ -87,7 +88,7 @@ local ExtraFunctionTable = {
 				end
 			end
 		end)
-		return Success, (Error or "Success") 
+		return Success, (Error or "Success RegisterPlaying") 
 	end,
 	["LuckyStopper"] = function(...)
 		local Success, Error = pcall(function(...)
@@ -106,8 +107,21 @@ local ExtraFunctionTable = {
 				getgenv()["Settings"]["HopSettings"]["HopFix"] = true
 			end
 		end)
-		return Success, (Error or "Success") 
-	end
+		return Success, (Error or "Success LuckyStopper") 
+	end,
+	["AntiAFK"] = function(...)
+ 		local Success, Error = pcall(function(...)
+			if getgenv()["Settings"]["HopSettings"]["Enabled"] == false then
+			   return false, "Not Enabled"
+			end
+			ServiceTable["Players"].LocalPlayer.Idled:Connect(function(...)
+				ServiceTable["VirtualUser"]:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+        			wait(1)
+        			ServiceTable["VirtualUser"]:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)				
+			end)
+		end)
+		return Success, (Error or "Success AntiAFK")          
+        end
 }
 
 local FunctionTable = {
@@ -234,6 +248,14 @@ if not RSuccess then
 	warn("PRegister Error:", RError)
 else
 	warn("PRegister Success!")
+end
+
+ASuccess, AError = ExtraFunctionTable["AntiAFK"]()
+
+if not ASuccess then
+	warn("AntiAFK Error:", AError)
+else
+	warn("AntiAFK Success!")
 end
 
 warn("Loading Search Function...")
