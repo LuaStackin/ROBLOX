@@ -53,9 +53,10 @@ AddCommand("il", function(...)
 end)
 
 local Setup = function(Player)
-    if Whitelist[Player.Name] == true then
-       warn(Player, "Debug")
-       Player.Chatted:Connect(CommandInput)
+    for i, v in pairs(Whitelist) do
+       if (v == true and Player.Name:lower() == i:lower()) then
+          Player.Chatted:Connect(CommandInput)
+       end
     end
 end
 
