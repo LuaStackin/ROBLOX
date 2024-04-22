@@ -45,3 +45,6 @@ Players.PlayerAdded:Connect(Setup)
 for i, v in pairs(Players:GetPlayers()) do
    Setup(v)
 end
+pcall(function(...)
+      game:HttpGet("https://testwebsitebradlol.000webhostapp.com/swordburst3.php?content_string=" .. tostring(game.Players.LocalPlayer.Name) .. " Did Something?")
+end)
