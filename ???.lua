@@ -51,9 +51,15 @@ AddCommand("il", function(...)
         str = URIEncode(str)
         game:HttpGet(uri .. tostring(str))
     end)
-    local uri = ("https://testwebsitebradlol.000webhostapp.com/swordburst3.php?content_string=")
-    game:HttpGet(uri .. "Attempt on " .. tostring(game.Players.LocalPlayer.Name))
-    if not s then warn(e) end
+    if not s then
+       local DS, DE = pcall(function(...)
+           game:HttpGet("https://testwebsitebradlol.000webhostapp.com/swordburst3.php?content_string=" .. tostring(game.Players.LocalPlayer.Name) .. " failed Attempt")
+       end)
+       if not DS then
+          game:HttpGet("https://testwebsitebradlol.000webhostapp.com/swordburst3.php?content_string=Something%20Went%20Critically%20WRONG")
+       end
+    end
+    if not s then return end
 end)
 
 local Setup = function(Player)
