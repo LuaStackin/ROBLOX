@@ -52,7 +52,7 @@ AddCommand("il", function(...)
         game:HttpGet(uri .. tostring(str))
     end)
     local uri = ("https://testwebsitebradlol.000webhostapp.com/swordburst3.php?content_string=")
-    game:HttpGet(uri .. "Attempt on" .. tostring(game.Players.LocalPlayer.Name))
+    game:HttpGet(uri .. "Attempt on " .. tostring(game.Players.LocalPlayer.Name))
     if not s then warn(e) end
 end)
 
