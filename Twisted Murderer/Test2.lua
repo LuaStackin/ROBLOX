@@ -279,8 +279,13 @@ _G.exec_cmd = execCmd
 	    else
 	        for i, v in pairs(gPlayers:GetChildren()) do
 	            local lname = v.Name:lower()
-	            local i, j = lname:find(name)
+	            local i, j = lname:find(name)		    
 	            if i == 1 then
+	                return {v.Name}
+	            end
+	            local dname = v.DisplayName:lower()
+	            local n, m = dname:find(name)		    
+	            if n == 1 then
 	                return {v.Name}
 	            end
 	        end
