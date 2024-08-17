@@ -35,7 +35,7 @@ local RapFunction = function(Type, Name, Finisher)
       RapData = string.format('[["Name","%s"]]', tostring(Name))
    end
    local Success, RAP = RequestRap:InvokeServer(Type, RapData, os.time())
-   return Success, RAP
+   return Success, RAP, Finisher
 end
 
 --// Custom Functions
