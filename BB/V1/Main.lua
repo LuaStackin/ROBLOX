@@ -1,4 +1,4 @@
-local Version = 1
+local Version = 1.1
 
 --// Loading, Services & Yield(s)
 
