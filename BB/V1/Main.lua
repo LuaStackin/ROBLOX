@@ -1,3 +1,5 @@
+local Version = 1
+
 --// Loading, Services & Yield(s)
 
 repeat wait() until game.IsLoaded
@@ -91,4 +93,4 @@ local FormatListings = function(...)
 end
 
 --// Return, keeping this private :D FUCK OFF!!!!!!! Code the rest yourself.
-return FormatListings
+return FormatListings, Version
