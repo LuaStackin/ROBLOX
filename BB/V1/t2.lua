@@ -93,22 +93,4 @@ local ValidatePurchase = function(Name, Price, Finisher, GetRapFunc) do
 end
 
 --// Main
-game:GetService("StarterGui"):SetCore("DevConsoleVisible", true)
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local PackagesFolder = ReplicatedStorage:WaitForChild("Packages", 5)
-local RequestRap = PackagesFolder:WaitForChild("_Index"):WaitForChild("sleitnick_net@0.1.0"):WaitForChild("net"):WaitForChild("RF/RequestItemRAP")
-local RapFunction = function(Type, Name, Finisher)
-   local RapData;
-   if Finisher == true then
-      RapData = string.format('[["Finisher",true],["Name","%s"]]', tostring(Name))
-   elseif Finisher == false or Finisher == nil then
-      RapData = string.format('[["Name","%s"]]', tostring(Name))
-   end
-   local Success, RAP = RequestRap:InvokeServer(Type, RapData, os.time())
-   return Success, RAP, Finisher
-end
-
 print(string.format("Success, loaded version: V%s", ScriptVersion))
-local Success, Purchase, RAP = ValidatePurchase("Laser Twinblade", 600, true, function(...)
-    return RapFunction("Sword", "Laser Twinblade", true)
-end)
