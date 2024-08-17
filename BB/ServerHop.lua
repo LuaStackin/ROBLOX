@@ -18,7 +18,10 @@ function ListServers(cursor)
 end
 time_to_wait = 0 --seconds
 local ValidServers = {}
-local Servers = ListServers()
+local Success, Servers = pcall(ListServers)
+repeat wait()
+   Success, Servers = pcall(ListServers)
+until Success == true
 local Server = Servers.data[math.random(1,#Servers.data)]
 local PreviousServerData = {}
 local SuccessRet, Error = pcall(function(...)
