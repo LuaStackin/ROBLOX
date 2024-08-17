@@ -19,9 +19,10 @@ end
 time_to_wait = 0 --seconds
 local ValidServers = {}
 local Success, Servers = pcall(ListServers)
-repeat wait()
-   Success, Servers = pcall(ListServers)
-until Success == true
+if not Success then
+game:GetService("TeleportService"):Teleport(game.PlaceId)
+return
+end
 local Server = Servers.data[math.random(1,#Servers.data)]
 local PreviousServerData = {}
 local SuccessRet, Error = pcall(function(...)
