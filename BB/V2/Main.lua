@@ -129,4 +129,4 @@ local FormatListings = function(...)
 end
 
 --// Return, keeping this private :D FUCK OFF!!!!!!! Code the rest yourself.
-return FormatListings, Version
+return FormatListings, RapFunction, Version
