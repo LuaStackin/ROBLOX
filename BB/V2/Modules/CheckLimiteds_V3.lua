@@ -28,7 +28,7 @@ end
 
 local _CreateEmbed_ = function(Name)
    return {content = nil, embeds = {{
-      title = string.format("LIMITED BOOTH CHECKER (%s)", tostring(Name)),
+      title = string.format("LIMITED BOOTH CHECKER (%s); V%s", tostring(Name), tostring(Version)),
       description = string.format("SERVER ID: %s", tostring(game.JobId)),
       color = 8192223,
       fields = {}
