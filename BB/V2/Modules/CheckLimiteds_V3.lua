@@ -1,3 +1,6 @@
+--// Version Control
+local Version = 1
+
 --// Loading
 repeat wait() until game.IsLoaded
 
@@ -10,6 +13,7 @@ else
 end
 
 local Hooks = {}
+local Settings = {UnderRapOnly = false, MinPrice = 2500}
 
 --// Custom Functions
 local SendHook = function(Index, Data)
@@ -47,9 +51,9 @@ local _Main_ = function()
       for _, Listing in pairs(PlayerListing) do
          OwnerOfListings = tostring(Listing["Owner"])
          if Listing["Rarity"]:lower() == "limited" or Listing["Rarity"]:lower() == "unique" then
-            if Listing["Price"] >= 5000 then
+            if Listing["Price"] >= Settings.MinPrice then
                local Success, Rap, Finisher = Listing["RequestItemRAP"]()
-               if Success then
+               if Success and ((Settings.UnderRapOnly == true and Listing["Price"] > Rap) or Settings.UnderRapOnly == false) then
                   if Rap > Listing["Price"] then
                      Listing["Name"] = Listing["Name"] .. " [UNDER RAP]"
                   end
@@ -81,5 +85,15 @@ local _ServerHop_ = function()
    return loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaStackin/ROBLOX/main/BB/ServerHop.lua"))()
 end
 
+local _UnderRapOnly_ = function(b)
+   Settings.UnderRapOnly = b or false
+end
+
+local _MinimumPrice_ = function(v)
+   Settings.MinPrice = tonumber(v)
+end
+
+
 -- Hi, this is just testing not really useful.
-return _Main_, _SetHook_, _ServerHop_
+warn(string.format("Script Version: V%s", tostring(Version)))
+return _Main_, _SetHook_, _ServerHop_, _UnderRapOnly_, _MinimumPrice_
