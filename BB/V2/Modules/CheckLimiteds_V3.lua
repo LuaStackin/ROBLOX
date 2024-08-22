@@ -99,8 +99,10 @@ end
 
 
 --[[
-    NOTE: This script is unfinished, neither was it made for a malicious purpose. It was only made to grab the RAP of certain items and publish them to a discord webhook for me to see, 
-    basically just an item sniper without the automation, if you use this don't expect anything flashy or for it to be automated.
+    NOTE: 
+    This script is unfinished, neither was it made for a malicious purpose. It was only made to grab the RAP of certain items 
+    and publish them to a discord webhook for me to see, basically just an item sniper without the automation, if you use this don't 
+    expect anything flashy or for it to be automated.
 ]]--
 warn(string.format("Script Version: V%s", tostring(Version)))
 return _Main_, _SetHook_, _ServerHop_, _UnderRapOnly_, _MinimumPrice_
