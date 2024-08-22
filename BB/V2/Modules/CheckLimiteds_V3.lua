@@ -52,7 +52,11 @@ local _Main_ = function()
                   if Rap > Listing["Price"] then
                      Listing["Name"] = Listing["Name"] .. " [UNDER RAP]"
                   end
-                  local Field = _CreateField_(Listing["Name"], Rap, Listing["Price"], "Not Added YET.")
+                  
+                  Percentage = (Listing["Price"] / Rap) * 100
+                  Percentage = string.format("%.0f", Percentage)
+   
+                  local Field = _CreateField_(Listing["Name"], Rap, Listing["Price"], Percentage)
                   table.insert(Fields, Field)
                end
             end
@@ -72,5 +76,9 @@ local _SetHook_ = function(Index, Value)
    Hooks[Index] = tostring(Value)
 end
 
+local _ServerHop_ = function()
+   return loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaStackin/ROBLOX/main/BB/ServerHop.lua"))()
+end
+
 -- Hi, this is just testing not really useful.
-return _Main_, _SetHook_
+return _Main_, _SetHook_, _ServerHop_
