@@ -119,7 +119,8 @@ local FormatListings = function(...)
              ["Price"] = ListingData.Price,
              ["Name"] = CheckName(ListingData.Type, ListingData.ItemName),
              ["Rarity"] = CheckRarity(ListingData.ItemName),
-             ["Owner"] = PlayerInstance or tostring(i)
+             ["Owner"] = PlayerInstance or tostring(i),
+             ["ListingId"] = tostring(ListingId)
             } 
             table.insert(FListings[tostring(i)], CustomData)
          end
