@@ -1,6 +1,6 @@
 --// Version Control
 -->> When this version hits 2 (V2), it will probably be reworked again! This is usually because after a number of iterations a script gets very messy. << --
-local Version = 1.21
+local Version = 1.25
 
 --// Loading
 repeat wait() until game.IsLoaded
@@ -14,7 +14,7 @@ else
 end
 
 local Hooks = {}
-local Settings = {UnderRapOnly = false, MinPrice = 2500}
+local Settings = {UnderRapOnly = false, MinPrice = 2500, Blacklist = {}}
 
 --// Custom Functions
 local SendHook = function(Index, Data)
@@ -57,7 +57,10 @@ local _Main_ = function()
       local Fields = {}
       for _, Listing in pairs(PlayerListing) do
          OwnerOfListings = tostring(Listing["Owner"])
-         if Listing["Rarity"]:lower() == "limited" or Listing["Rarity"]:lower() == "unique" then
+         local Blacklist = table.find(Settings.Blacklist, Listing["Name"]:lower())
+         local IsUnique = Listing["Rarity"]:lower() == "unique"
+         local IsLimited = Listing["Rarity"]:lower() == "limited"
+         if (IsLimited or IsUnique) and not Blacklist then
             if Listing["Price"] >= Settings.MinPrice then
                local Success, Rap, Finisher = Listing["RequestItemRAP"]()
                local UnderRap = (Settings.UnderRapOnly == true and Rap > Listing["Price"])
@@ -103,6 +106,9 @@ local _MinimumPrice_ = function(v)
    warn("Set MP to", tonumber(v))
 end
 
+local _BlacklistItem_ = function(n)
+   table.insert(Settings.Blacklist, n:lower())
+end
 
 --[[
     NOTE: 
@@ -111,4 +117,4 @@ end
     expect anything flashy or for it to be automated.
 ]]--
 warn(string.format("Script Version: V%s", tostring(Version)))
-return _Main_, _SetHook_, _ServerHop_, _UnderRapOnly_, _MinimumPrice_
+return _Main_, _SetHook_, _ServerHop_, _UnderRapOnly_, _MinimumPrice_, _BlacklistItem_
