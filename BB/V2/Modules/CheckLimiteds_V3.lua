@@ -1,4 +1,5 @@
 --// Version Control
+-->> When this version hits 2 (V2), it will probably be reworked again! This is usually because after a number of iterations a script gets very messy. << --
 local Version = 1.2
 
 --// Loading
