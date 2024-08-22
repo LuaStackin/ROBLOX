@@ -1,5 +1,5 @@
 --// Version Control
-local Version = 1
+local Version = 1.1
 
 --// Loading
 repeat wait() until game.IsLoaded
@@ -53,7 +53,8 @@ local _Main_ = function()
          if Listing["Rarity"]:lower() == "limited" or Listing["Rarity"]:lower() == "unique" then
             if Listing["Price"] >= Settings.MinPrice then
                local Success, Rap, Finisher = Listing["RequestItemRAP"]()
-               if Success and ((Settings.UnderRapOnly == true and Listing["Price"] > Rap) or Settings.UnderRapOnly == false) then
+               local UnderRap = (Settings.UnderRapOnly == true and Listing["Price"] > Rap)
+               if Success and (UnderRap or Settings.UnderRapOnly == false) then
                   if Rap > Listing["Price"] then
                      Listing["Name"] = Listing["Name"] .. " [UNDER RAP]"
                   end
@@ -87,10 +88,12 @@ end
 
 local _UnderRapOnly_ = function(b)
    Settings.UnderRapOnly = b or false
+   warn("Set URO to", tostring(b))
 end
 
 local _MinimumPrice_ = function(v)
    Settings.MinPrice = tonumber(v)
+   warn("Set MP to", tonumber(v))
 end
 
 
