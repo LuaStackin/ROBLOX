@@ -1,6 +1,6 @@
 --// Version Control
 -->> When this version hits 2 (V2), it will probably be reworked again! This is usually because after a number of iterations a script gets very messy. << --
-local Version = 1.25
+local Version = 1.26
 
 --// Loading
 repeat wait() until game.IsLoaded
@@ -60,6 +60,9 @@ local _Main_ = function()
          local Blacklist = table.find(Settings.Blacklist, Listing["Name"]:lower())
          local IsUnique = Listing["Rarity"]:lower() == "unique"
          local IsLimited = Listing["Rarity"]:lower() == "limited"
+         if (Blacklist) then
+            warn(Listing["Name"], "was ignored due to blacklist.")
+         end
          if (IsLimited or IsUnique) and not Blacklist then
             if Listing["Price"] >= Settings.MinPrice then
                local Success, Rap, Finisher = Listing["RequestItemRAP"]()
