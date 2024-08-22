@@ -38,7 +38,13 @@ end
 local _CreateField_ = function(Name, Rap, Price, Percentage, Rarity)
    return {
     name = Name,
-    value = string.format("RAP: **%s**\nPrice: **%s**\nPercentage: **%s%%**\nRarity: **%s**", tostring(Rap), tostring(Price), tostring(Percentage), tostring(Rarity)),
+    value = string.format(
+         "RAP: **%s**\nPrice: **%s**\nPercentage: **%s%%**\nRarity: **%s**", 
+         tostring(Rap), 
+         tostring(Price), 
+         tostring(Percentage), 
+         tostring(Rarity)
+    ),
     inline = true
    }
 end
