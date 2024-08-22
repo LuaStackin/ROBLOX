@@ -1,4 +1,4 @@
-local Version = 1.51
+local Version = 1.52
 
 --// Loading, Services & Yield(s)
 
@@ -42,25 +42,25 @@ local RapCacheFunction = function(Method, Name, Finisher, Value)
    local RapType = "Finisher" and Finisher == true or "Regular"
    if Method == "SUBMIT" then
       if RapCache[Name] ~= nil then
-         RapCache[Name][RapType].rap = Value 
-         RapCache[Name][RapType].last_update = os.time()
+         RapCache[Name][RapType]["rap"] = Value 
+         RapCache[Name][RapType]["last_update"] = os.time()
          Save_Cache()
          return true, "SET CACHE."
      else
          RapCache[Name] = {Finisher = {rap = nil, last_update = nil}, Regular = {rap = nil, last_update = nil}}
-         RapCache[Name][RapType].rap = Value
-         RapCache[Name][RapType].last_update = os.time()
+         RapCache[Name][RapType]["rap"] = Value
+         RapCache[Name][RapType]["last_update"] = os.time()
          Save_Cache()
          return true, "SET CACHE."
       end
       return false, "COULD NOT SET CACHE?"
    elseif Method == "GET" then
       if RapCache[Name] ~= nil then
-         if RapCache[Name][RapType].rap ~= nil then
-            if (os.time() - RapCache[Name][RapType].last_update) >= 900 then
+         if RapCache[Name][RapType]["rap"] ~= nil then
+            if (os.time() - RapCache[Name][RapType]["last_update"]) >= 900 then
                return false, "CACHE TOO OLD."
             end
-            return true, RapCache[Name][RapType].rap
+            return true, RapCache[Name][RapType]["rap"]
          else
             return false, "TYPE NOT CACHED."
          end
