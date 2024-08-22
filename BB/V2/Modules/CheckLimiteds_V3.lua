@@ -1,5 +1,5 @@
 --// Version Control
-local Version = 1.1
+local Version = 1.2
 
 --// Loading
 repeat wait() until game.IsLoaded
