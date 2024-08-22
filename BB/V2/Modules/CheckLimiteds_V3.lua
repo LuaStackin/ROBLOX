@@ -108,6 +108,7 @@ end
 
 local _BlacklistItem_ = function(n)
    table.insert(Settings.Blacklist, n:lower())
+   warn("Blacklisted Item:", tostring(n):lower())
 end
 
 --[[
