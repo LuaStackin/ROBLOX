@@ -29,10 +29,10 @@ local _CreateEmbed_ = function(Name)
    }}}
 end
 
-local _CreateField_ = function(Name, Rap, Price, Percentage)
+local _CreateField_ = function(Name, Rap, Price, Percentage, Rarity)
    return {
     name = Name,
-    value = string.format("RAP: **%s**\nPrice: **%s**\nPercentage: **%s%%**", tostring(Rap), tostring(Price), tostring(Percentage)),
+    value = string.format("RAP: **%s**\nPrice: **%s**\nPercentage: **%s%%**\nRarity:", tostring(Rap), tostring(Price), tostring(Percentage), tostring(Rarity)),
     inline = true
    }
 end
@@ -45,7 +45,7 @@ local _Main_ = function()
       local Fields = {}
       for _, Listing in pairs(PlayerListing) do
          OwnerOfListings = tostring(Listing["Owner"])
-         if Listing["Rarity"]:lower() == "limited" then
+         if Listing["Rarity"]:lower() == "limited" or Listing["Rarity"]:lower() == "unique" then
             if Listing["Price"] >= 5000 then
                local Success, Rap, Finisher = Listing["RequestItemRAP"]()
                if Success then
@@ -56,7 +56,7 @@ local _Main_ = function()
                   Percentage = (Listing["Price"] / Rap) * 100
                   Percentage = string.format("%.0f", Percentage)
    
-                  local Field = _CreateField_(Listing["Name"], Rap, Listing["Price"], Percentage)
+                  local Field = _CreateField_(Listing["Name"], Rap, Listing["Price"], Percentage, Listing["Rarity"])
                   table.insert(Fields, Field)
                end
             end
