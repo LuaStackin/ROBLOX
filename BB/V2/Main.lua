@@ -1,4 +1,4 @@
-local Version = 1.5
+local Version = 1.51
 
 --// Loading, Services & Yield(s)
 
@@ -56,7 +56,7 @@ local RapCacheFunction = function(Method, Name, Finisher, Value)
       return false, "COULD NOT SET CACHE?"
    elseif Method == "GET" then
       if RapCache[Name] ~= nil then
-         if RapCache[Name][RapType] ~= nil then
+         if RapCache[Name][RapType].rap ~= nil then
             if (os.time() - RapCache[Name][RapType].last_update) >= 900 then
                return false, "CACHE TOO OLD."
             end
