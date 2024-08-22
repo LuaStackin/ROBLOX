@@ -1,4 +1,4 @@
-local Version = 1
+local Version = 1.5
 
 --// Loading, Services & Yield(s)
 
@@ -23,22 +23,44 @@ local Listings = BoothController.BoothListings.Data
 --// Item Data
 local ItemInfo = require(SharedFolder:WaitForChild("ItemInfo"))
 local RapCache = {}
+
+local Save_Cache = function()
+   writefile("Saved_Cache.json", HttpService:JSONEncode(RapCache))
+end
+
+local Load_Cache = function()
+   local Success, Error = pcall(function(...)
+       RapCache = HttpService:JSONDecode(readfile("Saved_Cache.json"))
+   end)
+   if not Success then
+      RapCache = {}
+      writefile("Saved_Cache.json", HttpService:JSONEncode(RapCache))
+   end
+end
+
 local RapCacheFunction = function(Method, Name, Finisher, Value) 
    local RapType = "Finisher" and Finisher == true or "Regular"
    if Method == "SUBMIT" then
       if RapCache[Name] ~= nil then
-         RapCache[Name][RapType] = Value 
+         RapCache[Name][RapType].rap = Value 
+         RapCache[Name][RapType].last_update = os.time()
+         Save_Cache()
          return true, "SET CACHE."
      else
-         RapCache[Name] = {Finisher = nil, Regular = nil}
-         RapCache[Name][RapType] = Value
+         RapCache[Name] = {Finisher = {rap = nil, last_update = nil}, Regular = {rap = nil, last_update = nil}}
+         RapCache[Name][RapType].rap = Value
+         RapCache[Name][RapType].last_update = os.time()
+         Save_Cache()
          return true, "SET CACHE."
       end
       return false, "COULD NOT SET CACHE?"
    elseif Method == "GET" then
       if RapCache[Name] ~= nil then
          if RapCache[Name][RapType] ~= nil then
-            return true, RapCache[Name][RapType]
+            if (os.time() - RapCache[Name][RapType].last_update) >= 900 then
+               return false, "CACHE TOO OLD."
+            end
+            return true, RapCache[Name][RapType].rap
          else
             return false, "TYPE NOT CACHED."
          end
@@ -129,5 +151,6 @@ local FormatListings = function(...)
    return FListings
 end
 
+Load_Cache()
 --// Return, keeping this private :D FUCK OFF!!!!!!! Code the rest yourself.
 return FormatListings, RapFunction, Version
