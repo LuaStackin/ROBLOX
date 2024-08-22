@@ -59,6 +59,7 @@ local _Main_ = function()
       for _, EmbedField in pairs(Fields) do
          table.insert(Embed.embeds[1].fields, EmbedField)
       end
+      SendHook(1, Embed)
    end
 end
 
