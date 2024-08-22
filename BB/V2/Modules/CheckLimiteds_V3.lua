@@ -66,7 +66,10 @@ local _Main_ = function()
          if (IsLimited or IsUnique) and not Blacklist then
             if Listing["Price"] >= Settings.MinPrice then
                local Success, Rap, Finisher = Listing["RequestItemRAP"]()
-               local UnderRap = (Settings.UnderRapOnly == true and Rap > Listing["Price"])
+               local UnderRap = false
+               if Success then
+                  UnderRap = (Settings.UnderRapOnly == true and Rap > Listing["Price"])
+               end
                if Success and (UnderRap or Settings.UnderRapOnly == false) then
                   if Rap > Listing["Price"] then
                      Listing["Name"] = Listing["Name"] .. " [UNDER RAP]"
@@ -121,4 +124,5 @@ end
     expect anything flashy or for it to be automated.
 ]]--
 warn(string.format("Script Version: V%s", tostring(Version)))
+warn(string.format("Loaded Functions Version: V%s", tostring(ScriptVersion)))
 return _Main_, _SetHook_, _ServerHop_, _UnderRapOnly_, _MinimumPrice_, _BlacklistItem_
