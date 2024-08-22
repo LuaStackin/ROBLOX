@@ -53,7 +53,7 @@ local _Main_ = function()
          if Listing["Rarity"]:lower() == "limited" or Listing["Rarity"]:lower() == "unique" then
             if Listing["Price"] >= Settings.MinPrice then
                local Success, Rap, Finisher = Listing["RequestItemRAP"]()
-               local UnderRap = (Settings.UnderRapOnly == true and Listing["Price"] > Rap)
+               local UnderRap = (Settings.UnderRapOnly == true and Rap > Listing["Price"])
                if Success and (UnderRap or Settings.UnderRapOnly == false) then
                   if Rap > Listing["Price"] then
                      Listing["Name"] = Listing["Name"] .. " [UNDER RAP]"
