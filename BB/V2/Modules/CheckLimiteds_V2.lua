@@ -49,17 +49,22 @@ local _Main_ = function()
             if Listing["Price"] >= 5000 then
                local Success, Rap, Finisher = Listing["RequestItemRAP"]()
                if Success then
+                  if Rap > Listing["Price"] then
+                     Listing["Name"] = Listing["Name"] .. " [UNDER RAP]"
+                  end
                   local Field = _CreateField_(Listing["Name"], Rap, Listing["Price"], "Not Added YET.")
                   table.insert(Fields, Field)
                end
             end
          end
       end
-      local Embed = _CreateEmbed_(OwnerOfListings)
-      for _, EmbedField in pairs(Fields) do
-         table.insert(Embed.embeds[1].fields, EmbedField)
+      if #Fields ~= 0 then
+         local Embed = _CreateEmbed_(OwnerOfListings)
+         for _, EmbedField in pairs(Fields) do
+            table.insert(Embed.embeds[1].fields, EmbedField)
+         end
+         SendHook(1, Embed) 
       end
-      SendHook(1, Embed)
    end
 end
 
