@@ -4,7 +4,7 @@ return {
     return game.ReplicatedStorage.Packages["_Index"]["sleitnick_net@0.1.0"]["net"]["RF/PurchaseBoothListing"]:InvokeServer({
       ["ListingId"] = Listing, 
       ["Owner"] = Player
-    })]]
+    })
  end,
  SnipeData = function(Method, Name, UserId, Item)
     if Method:lower() == "set" then
