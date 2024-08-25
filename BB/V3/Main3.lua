@@ -7,12 +7,13 @@ return {
       ["Owner"] = Player
     })
  end,
- SnipeData = function(Method, Name, UserId, Item)
+ SnipeData = function(Method, Name, UserId, Item, ListingGUID)
     if Method:lower() == "set" then
         return true, game:GetService("HttpService"):JSONEncode({
             SellerID = UserId,
             SellerName = Name,
-            ItemName = Item
+            ItemName = Item,
+            ListingID = ListingGUID
         })
     elseif Method:lower() == "get" then
         local sd = {}
