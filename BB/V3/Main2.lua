@@ -32,7 +32,7 @@ return {
     String = string.format(String, tostring(Name))
     return GetItemListings:InvokeServer(Type, String)
  end,
- TeleportToListing = function(Type, Name, GUID)
+ TeleportToListing = function(Type, Name, Finisher, GUID)
     local String = '[["Name","%s"]]'
     if Finisher == true then
         String = '[["Finisher",true],["Name","%s"]]'
