@@ -4,8 +4,8 @@ local RunService = game:GetService("RunService")
 local Shaking = false
 local CastChecking = false
 
-local SetCharacter = function(Character)
-   Character.HumanoidRootPart.Anchored = true
+local SetCharacter = function(Frame)
+   Character.HumanoidRootPart.CFrame = Frame
 end
 
 local SelectButton = function(ShakeButton)
@@ -101,13 +101,14 @@ local InstantFunction = function(Descendant)
     end
 end
 
+local CFramePosition = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
 local CheckStatus = function(...)
+   pcall(SetCharacter, CFramePosition)
    if Shaking == false then
       Cast()
    end
 end 
 
---SetCharacter(game.Players.LocalPlayer.Character)
 game.Players.LocalPlayer.PlayerGui.DescendantRemoving:Connect(InstantFunction)
 
 RunService.RenderStepped:Connect(CheckStatus)
