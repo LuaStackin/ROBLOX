@@ -108,7 +108,7 @@ local CheckStatus = function(...)
 end 
 
 SetCharacter(game.Players.LocalPlayer.Character)
-game.Players.LocalPlayerPlayerGui.DescendantRemoving:Connect(InstantFunction)
+game.Players.LocalPlayer.PlayerGui.DescendantRemoving:Connect(InstantFunction)
 
 RunService.RenderStepped:Connect(CheckStatus)
 RunService.RenderStepped:Connect(Shake)
