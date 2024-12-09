@@ -13,7 +13,11 @@ local SelectButton = function(ShakeButton)
       game:GetService("GuiService").GuiNavigationEnabled = true
    end
    game:GetService("GuiService").SelectedObject = ShakeButton
-   return true 
+   if game:GetService("GuiService").SelectedObject ~= nil then 
+       return true 
+   else
+       return false
+   end
 end
 
 local FireButton = function(...)
@@ -53,8 +57,10 @@ local Shake = function(...)
           local shakeui = game.Players.LocalPlayer.PlayerGui:FindFirstChild("shakeui")
           if shakeui.safezone:FindFirstChild("button") then
              local button = shakeui.safezone.button
-             SelectButton(button)
-             FireButton()()
+             local Selected = SelectButton(button)
+             if Selected then 
+		FireButton()()
+	     end
           end
       end)
    else
