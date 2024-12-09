@@ -4,7 +4,7 @@ local RunService = game:GetService("RunService")
 local Shaking = false
 local CastChecking = false
 
-local SetCharacter = function(Frame)
+local SetCharacter = function(Character, Frame)
    Character.HumanoidRootPart.CFrame = Frame
 end
 
@@ -103,7 +103,7 @@ end
 
 local CFramePosition = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
 local CheckStatus = function(...)
-   pcall(SetCharacter, CFramePosition)
+   pcall(SetCharacter, game.Players.LocalPlayer.Character, CFramePosition)
    if Shaking == false then
       Cast()
    end
