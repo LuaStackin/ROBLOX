@@ -99,11 +99,12 @@ end
 
 local InstantFunction = function(Descendant)
     if Descendant.Name == "shakeui" then
+       local PlayerUI = Descendant.Parent
        local Timeout = 0
        repeat wait(.5) 
             Timeout = Timeout + 1
             InstantCatch() 
-       until Timeout == 20
+       until not PlayerUI:FindFirstChild("reel")
     end
 end
 
