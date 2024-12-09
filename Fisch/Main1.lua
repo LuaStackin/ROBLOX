@@ -112,4 +112,3 @@ game.Players.PlayerGui.DescendantRemoving:Connect(InstantFunction)
 
 RunService.RenderStepped:Connect(CheckStatus)
 RunService.RenderStepped:Connect(Shake)
-=
