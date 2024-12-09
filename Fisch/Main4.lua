@@ -13,7 +13,7 @@ local SelectButton = function(ShakeButton)
       game:GetService("GuiService").GuiNavigationEnabled = true
    end
    game:GetService("GuiService").SelectedObject = ShakeButton
-   if game:GetService("GuiService").SelectedObject ~= nil then 
+   if tostring(game:GetService("GuiService").SelectedObject) == "button" then 
        return true 
    else
        return false
@@ -117,5 +117,5 @@ end
 
 game.Players.LocalPlayer.PlayerGui.DescendantRemoving:Connect(InstantFunction)
 
-RunService.RenderStepped:Connect(CheckStatus)
+RunService.Stepped:Connect(CheckStatus)
 RunService.RenderStepped:Connect(Shake)
