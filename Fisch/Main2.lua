@@ -99,7 +99,7 @@ local InstantFunction = function(Descendant)
             InstantCatch() 
        until Timeout == 20
     end
-end)
+end
 
 local CheckStatus = function(...)
    if Shaking == false then
