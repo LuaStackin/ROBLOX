@@ -1,8 +1,8 @@
-local syn.protect_gui = function(...)
+syn.protect_gui = function(...)
    return true
 end
 
-local protect_gui = function(...)
+protect_gui = function(...)
    return true
 end
 
