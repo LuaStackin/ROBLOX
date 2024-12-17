@@ -1,3 +1,4 @@
+local syn = {}
 syn.protect_gui = function(...)
    return true
 end
