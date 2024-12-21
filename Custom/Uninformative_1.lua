@@ -29,7 +29,7 @@ local f2 = function(arg1)
    settings().Network.IncomingReplicationLag = Input
 end
 
-local f3 = function(arg1, arg2)
+local f3 = function(arg1, arg2, arg4)
    local arg3s, arg3 = f1(arg1p, arg2p)
    if (not arg3s or arg3 == "") then
       warn("[ERR, ARG3]")
@@ -38,7 +38,7 @@ local f3 = function(arg1, arg2)
    f2(math.huge)
    wait(3)
    local arg3 = f1(arg1p, arg2p)
-   for i = 1, FireAmount do
+   for i = 1, arg4 do
       arg1:FireServer(arg2, arg3)
    end
    wait(3)
