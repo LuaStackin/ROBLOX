@@ -46,4 +46,4 @@ local f3 = function(arg1, arg2, arg4)
    return true
 end
 
-return f3
+return f, f3
