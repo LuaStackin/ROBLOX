@@ -11,7 +11,7 @@ local f1 = function(arg1, arg2)
    local a = {}
    local c = ""
    pcall(function(...)
-	     a = game:GetService("HttpService"):JSONDecode(arg2.Value)
+	a = game:GetService("HttpService"):JSONDecode(arg2.Value)
    end)
    for _, b in pairs(arg1) do
       if a[tostring(b):lower()] == nil then
