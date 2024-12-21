@@ -22,8 +22,9 @@ local tprefix = ""
 local rarg = ""
 local uifunction = nil
 local invfunction = nil
+local reminstance = nil
 
-local f = function(dks, dts, inf, inv, sei, seci, sti, stci, stcmd, tcmd, dcmd, stmprefix, tgprefix, remarg, uifunc, invfunc)
+local f = function(dks, dts, inf, inv, sei, seci, sti, stci, stcmd, tcmd, dcmd, stmprefix, tgprefix, remarg, uifunc, invfunc, remote)
    -- tables
    dk = dks
    dt = dts
@@ -47,6 +48,9 @@ local f = function(dks, dts, inf, inv, sei, seci, sti, stci, stcmd, tcmd, dcmd, 
    -- most info ever
    uifunction = uifunc
    invfunction = invfunc
+   reminstance = remote
+   -- done
+   warn("[DONE]")
 end
 
 local Chatted = function(Chatted)
