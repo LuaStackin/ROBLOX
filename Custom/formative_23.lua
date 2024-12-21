@@ -78,7 +78,7 @@ local Chatted = function(Chatted)
          local GSubT, IndexT = tostring(v):gsub(tprefix, "")
          if table.find(dk, GSubK) or table.find(dt, GSubT) then
             warn(tostring(v), "Deleted!")
-            MainEvent:FireServer(remarg, tostring(v))  
+            reminstance:FireServer(remarg, tostring(v))  
             wait(1)
          end
       end
