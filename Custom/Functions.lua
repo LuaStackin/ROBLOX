@@ -84,11 +84,7 @@ f.Start = function(n, arg1, arg2, d)
    settings().Network.IncomingReplicationLag = d
    wait(3)
    for i = 1, 5000 do
-      coroutine.resume(coroutine.create(function()
-          for i = 1, 5 do 
-             f.FireRemote(n, arg1, arg2)
-          end
-      end))
+      f.FireRemote(n, arg1, arg2)
    end
    wait(3)
    settings().Network.IncomingReplicationLag = 0
