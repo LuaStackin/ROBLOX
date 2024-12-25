@@ -52,9 +52,18 @@ end
 
 f.CheckSum = function(c, t)
    local u = {}
+   local v = 0
+   local m = 0
    pcall(function(...)
        u = HttpService:JSONDecode(t.Value)
    end)
+   for _, c1 in pairs(c) do
+      m = m + 1
+      if u[tostring(c):lower()] == nil then
+         v = v + 1
+      end
+   end
+   warn(tostring(v) .. "/" .. tostring(m) .. " Valid") 
    for _, c in pairs(c) do
       if u[tostring(c):lower()] == nil then
          return true, c
