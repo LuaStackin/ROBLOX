@@ -2,6 +2,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 
+local RC = 0
+
 local f = {}
 
 local table_s = {}
@@ -30,6 +32,24 @@ f.SetCommand = function(c, f)
    commands[c:lower()] = f
 end
 
+f.SetLog = function(i, s, s2, s3)
+   i.ChildAdded:Connect(function(t)
+       local timeout = 0
+       repeat wait()
+            timeout = timeout + 1
+       until tostring(t) ~= "Value" or timeout >= 100
+       if tostring(t):sub(1,2) ~= s then
+          local GS, IS = tostring(t):gsub(s2, "")
+          local GT, IT = tostring(t):gsub(s3, "")
+          if not table.find(delete_s, GS) and not table.find(delete_t, GT) then 
+             RC = RC + 1
+             RS = ("(" .. tostring(RC) .. ")")
+             print(tostring(t), "+", RS)
+          end
+       end
+   end)
+end
+
 f.CheckSum = function(c, t)
    local u = {}
    pcall(function(...)
@@ -49,6 +69,15 @@ end
 
 f.GetInfo_Deletes = function(...)
    return delete_s, delete_t
+end
+
+f.Start = function(n, arg1, arg2)
+   settings().Network.IncomingReplicationLag = math.huge
+   wait(3)
+   f.FireRemote(n, arg1, arg2)
+   wait(3)
+   settings().Network.IncomingReplicationLag = 0
+   return true
 end
 
 local GetClient = function(...)
