@@ -33,7 +33,7 @@ end
 f.CheckSum = function(c, t)
    local u = {}
    pcall(function(...)
-       u = HttpService:JSONDecode(u = t.Value)
+       u = HttpService:JSONDecode(t.Value)
    end)
    for _, c in pairs(c) do
       if u[tostring(c):lower()] == nil then
