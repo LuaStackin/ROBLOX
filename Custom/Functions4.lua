@@ -59,7 +59,7 @@ f.CheckSum = function(c, t)
    end)
    for _, c1 in pairs(c) do
       m = m + 1
-      if u[tostring(c):lower()] == nil then
+      if u[tostring(c1):lower()] == nil then
          v = v + 1
       end
    end
