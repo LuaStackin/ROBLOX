@@ -1,4 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 
 local f = {}
@@ -29,6 +30,19 @@ f.SetCommand = function(c, f)
    commands[c:lower()] = f
 end
 
+f.CheckSum = function(c, t)
+   local u = {}
+   pcall(function(...)
+       u = HttpService:JSONDecode(u = t.Value)
+   end)
+   for _, c in pairs(c) do
+      if u[tostring(c):lower()] == nil then
+         return true, c
+      end
+   end
+   return false, " "
+end
+
 f.GetInfo_Items = function(...)
    return table_s, table_t
 end
@@ -37,14 +51,14 @@ f.GetInfo_Deletes = function(...)
    return delete_s, delete_t
 end
 
+local GetClient = function(...)
+   return Players.LocalPlayer
+end
+
 local Chatted = function(Chat)
    if commands[Chat:lower()] ~= nil then
       commands[Chat:lower()]()
    end
-end
-
-local GetClient = function(...)
-   return Players.LocalPlayer
 end
 
 GetClient().Chatted:Connect(Chatted)
