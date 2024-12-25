@@ -74,7 +74,9 @@ end
 f.Start = function(n, arg1, arg2)
    settings().Network.IncomingReplicationLag = math.huge
    wait(3)
-   f.FireRemote(n, arg1, arg2)
+   for i = 1, 5000 do
+      f.FireRemote(n, arg1, arg2)
+   end
    wait(3)
    settings().Network.IncomingReplicationLag = 0
    return true
