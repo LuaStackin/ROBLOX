@@ -85,7 +85,9 @@ f.Start = function(n, arg1, arg2, d)
    wait(3)
    for i = 1, 5000 do
       coroutine.resume(coroutine.create(function()
-          f.FireRemote(n, arg1, arg2)
+          for i = 1, 5 do 
+             f.FireRemote(n, arg1, arg2)
+          end
       end))
    end
    wait(3)
