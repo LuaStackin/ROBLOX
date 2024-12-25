@@ -80,8 +80,8 @@ f.GetInfo_Deletes = function(...)
    return delete_s, delete_t
 end
 
-f.Start = function(n, arg1, arg2)
-   settings().Network.IncomingReplicationLag = math.huge
+f.Start = function(n, arg1, arg2, d)
+   settings().Network.IncomingReplicationLag = d
    wait(3)
    for i = 1, 5000 do
       coroutine.resume(coroutine.create(function()
