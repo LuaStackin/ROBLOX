@@ -81,6 +81,12 @@ f.GetInfo_Deletes = function(...)
 end
 
 f.Start = function(n, arg1, arg2, d, a)
+   if a == nil then 
+      a = 5000
+      warn("default, -a")
+   else
+      warn("set, -a")
+   end
    settings().Network.IncomingReplicationLag = d
    wait(3)
    for i = 1, a do
