@@ -80,10 +80,10 @@ f.GetInfo_Deletes = function(...)
    return delete_s, delete_t
 end
 
-f.Start = function(n, arg1, arg2, d)
+f.Start = function(n, arg1, arg2, d, a)
    settings().Network.IncomingReplicationLag = d
    wait(3)
-   for i = 1, 5000 do
+   for i = 1, a do
       f.FireRemote(n, arg1, arg2)
    end
    wait(3)
