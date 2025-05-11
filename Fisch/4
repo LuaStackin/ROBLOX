@@ -73,11 +73,6 @@ end;
 
 local SaveinstanceURL = "https://raw.githubusercontent.com/luau/UniversalSynSaveInstance/refs/heads/main/saveinstance.luau";
 
-if (decompile or (getgenv or getfenv)().decompile) then
-	-- [[ Store old decompile function ]]
-	(getgenv or getfenv).decompile = (getgenv or getfenv)().decompile or decompile
-end;
-
 function decompile(script: LocalScript | ModuleScript | Script)
 	assert(getscriptbytecode, "Your executor cannot retrieve bytecode from Script.");
 	assert(request, "Your executor is incapable of making requests to servers.");
