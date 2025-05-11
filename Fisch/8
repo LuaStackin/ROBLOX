@@ -2,7 +2,7 @@
 
 local SAVEINSTANCE_OPTIONS = {NilInstances = false, SaveNotCreatable = true, RemovePlayerCharacters = false}; -- [[ Saveinstance options go here. ]]
 local DECOMPILER_OPTIONS = {}; -- [[ Decompiler options (for oracle) go here ]]
-local DECOMPILER_KEY = "ca46304d-cdbb-4bde-b43e-53f002e79fc6";
+local DECOMPILER_KEY = "";
 
 -- [[ Type data from the original Oracle decompiling script ]]
 
