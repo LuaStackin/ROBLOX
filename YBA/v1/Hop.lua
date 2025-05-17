@@ -34,7 +34,7 @@ MainModule.ServerHop = function(Mode)
          local path = "/v1/users/"
          local args = random_player.UserId
          local url = (tostring(domain) .. tostring(path) .. tostring(args) .. tostring(method))
-         syn.request({
+         request({
            Url = url,
            Method = "POST"
          })
@@ -53,7 +53,7 @@ MainModule.ServerHop = function(Mode)
          local port = 7963
          local args = "?Account=" .. tostring(Players.LocalPlayer.Name) .. "&UserId=" .. tostring(random_player.UserId)
          local url = (localhost .. tostring(port) .. "/" .. tostring(method) .. tostring(args))
-         syn.request({
+         request({
            Url = url,
            Method = "GET"
          })
