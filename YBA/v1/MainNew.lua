@@ -189,7 +189,7 @@ local ITable = {
 				local C = Args[2]["CFrame"]
 				local P = Args[2]["CD"]
 				if Settings["SpawnLogger"] == true then
-					warn(N, "Spawned! Collecting:", tostring(TableTable["ItemTable"][tostring(N)] == true))
+					warn(tostring(N), "Spawned! Collecting:", tostring(TableTable["ItemTable"][tostring(N)] == true))
 				end
 				if Settings["StopAtLucky"] == true then
 					if tostring(N) == "Lucky Arrow" or tostring(N) == "Lucky Stone Mask" then
