@@ -171,10 +171,10 @@ local FunctionTable = {
 			repeat wait() until (getgenv()["Settings"]["HopSettings"]["HopFix"] ~= nil)
 			warn("Time Elapsed, Hopping Servers now..")
 			if true then
-				loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaStackin/ROBLOX/main/YBA/v1/Hop.lua"))().ServerHop()
+				loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaStackin/ROBLOX/main/YBA/v1/Hop.lua"))().ServerHop(getgenv()["Settings"]["HopSettings"]["Mode"])
 			end
 		else
-			loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaStackin/ROBLOX/main/YBA/v1/Hop.lua"))().ServerHop()
+			loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaStackin/ROBLOX/main/YBA/v1/Hop.lua"))().ServerHop(getgenv()["Settings"]["HopSettings"]["Mode"])
 		end
 	end
 }
