@@ -398,6 +398,6 @@ local getscriptbytecode = getscriptbytecode
 local encode = base64.encode
 local request = request
 local function funnyfunction(s)
-    setclipboard(encode(getscriptbytecode(s)));
+    return encode(getscriptbytecode(s));
 end
 getgenv().funnyfunction = funnyfunction
