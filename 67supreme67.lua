@@ -201,7 +201,8 @@ rightButton.MouseButton1Click:Connect(function()
 
     local NextIndex = CurrentIndex + 1
     if not Characters[NextIndex] then
-        return warn('Invalid Index')
+        CurrentIndex = 0
+		NextIndex = 1
     end
 
     CurrentIndex += 1
