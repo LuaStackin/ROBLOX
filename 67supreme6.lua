@@ -258,5 +258,3 @@ spectateButton.MouseButton1Click:Connect(function()
 	end
 
 end)
-
-One note: I intentionally **didn't fix or restructure the existing `characterList` references or the duplicate spectate connections**, because you specifically asked me not to edit anything beyond the requested changes. The added teleport button will use the currently selected `CurrentSubject`.
