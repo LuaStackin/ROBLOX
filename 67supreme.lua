@@ -1,36 +1,17 @@
 local CurrentSubject = nil 
 local LastSubject = nil 
  
-local Characters = workspace.Characters 
-local characterList = {} 
- 
--- Initial characters 
-for _, character in ipairs(Characters:GetChildren()) do 
-	table.insert(characterList, character) 
-end 
- 
--- New character 
-Characters.ChildAdded:Connect(function(character) 
-	table.insert(characterList, character) 
-end) 
- 
--- Removed character 
-Characters.ChildRemoved:Connect(function(character) 
-	for index, existingCharacter in ipairs(characterList) do 
-		if existingCharacter == character then 
-			table.remove(characterList, index) 
-			break 
-		end 
-	end 
-end) 
- 
+local Characters = workspace.Characters:GetChildren()
+local CurrentIndex = 1
+
 game:GetService('RunService').RenderStepped:Connect(function()
+    Characters = Characters:GetChildren()
 
 	game.Players.LocalPlayer.CameraMode = 'Classic'
 	game.Players.LocalPlayer.CameraMaxZoomDistance = 1000
 
 	game.Lighting.GlobalShadows = false
-	game.Lighting.Brightness = 100
+	game.Lighting.Brightness = 1000
 
 	if CurrentSubject then
 		workspace.CurrentCamera.CameraSubject = CurrentSubject
@@ -164,7 +145,7 @@ local function getSpectateSubject(character)
 	if humanoid then
 		return humanoid
 	end
-    
+
 	return nil
 end
 
@@ -187,87 +168,22 @@ local function updateNameLabel()
 	end
 end
 
-
--- Find a valid character
-local function findValidIndex()
-	if #characterList == 0 then
-		return nil
-	end
-
-	for i = 1, #characterList do
-		
-		local index = ((currentIndex - 1 + i - 1) % #characterList) + 1
-		local character = characterList[index]
-
-		if character and character.Parent then
-			
-			local subject = getSpectateSubject(character)
-
-			if subject then
-				return index
-			end
-		end
-	end
-
-	return nil
-end
-
-
--- Spectate a specific character
-local function spectateCharacter(index)
-	if #characterList == 0 then
-		CurrentSubject = nil
-		updateNameLabel()
-		return
-	end
-
-	-- Wrap around
-	if index > #characterList then
-		index = 1
-	elseif index < 1 then
-		index = #characterList
-	end
-
-	currentIndex = index
-
-	local validIndex = findValidIndex()
-
-	if not validIndex then
-		CurrentSubject = nil
-		updateNameLabel()
-		return
-	end
-
-	currentIndex = validIndex
-
-	local character = characterList[currentIndex]
-	local subject = getSpectateSubject(character)
-
-	if subject then
-		LastSubject = CurrentSubject
-		CurrentSubject = subject
-
-		updateNameLabel()
-
-		print("Spectating:", character.Name)
-		print("Index:", currentIndex)
-		print("Subject:", subject:GetFullName())
-	end
-end
-
-
-----------------------------------------------------------------
--- LEFT BUTTON
-----------------------------------------------------------------
-
 leftButton.MouseButton1Click:Connect(function()
 
 	if not spectating then
 		return
 	end
 
-	spectateCharacter(currentIndex - 1)
+    local NextIndex = CurrentIndex - 1
+    if 0 >= NextIndex or not Characters[NextIndex] then
+        return warn('Invalid Index')
+    end
+    
+    CurrentIndex = CurrentIndex - 1
 
+	if Characters[NextIndex] then
+        CurrentSubject = Characters[NextIndex]:FindFirstChildOfClass('BasePart') or Characters[NextIndex]:FindFirstChildOfClass('Humanoid') or game.Players.LocalPlayer.Character
+    end
 end)
 
 
@@ -276,13 +192,20 @@ end)
 ----------------------------------------------------------------
 
 rightButton.MouseButton1Click:Connect(function()
-
 	if not spectating then
 		return
 	end
 
-	spectateCharacter(currentIndex + 1)
+    local NextIndex = CurrentIndex + 1
+    if not Characters[NextIndex] then
+        return warn('Invalid Index')
+    end
 
+    CurrentIndex += 1
+
+	if Characters[NextIndex] then
+        CurrentSubject = Characters[NextIndex]:FindFirstChildOfClass('BasePart') or Characters[NextIndex]:FindFirstChildOfClass('Humanoid') or game.Players.LocalPlayer.Character
+    end
 end)
 
 
@@ -293,8 +216,6 @@ end)
 spectateButton.MouseButton1Click:Connect(function()
 
 	if spectating then
-
-		-- Stop spectating
 		spectating = false
 
 		LastSubject = CurrentSubject
@@ -302,45 +223,8 @@ spectateButton.MouseButton1Click:Connect(function()
 
 		nameLabel.Text = ""
 		spectateButton.Text = "SPECTATE"
-
-		-- Return camera to local player
-		local character = player.Character
-
-		if character then
-
-			local humanoid = character:FindFirstChildOfClass("Humanoid")
-
-			if humanoid then
-				workspace.CurrentCamera.CameraSubject = humanoid
-			end
-
-		end
-
 	else
-
-		-- Start spectating
 		spectating = true
-
-		spectateButton.Text = "STOP SPECTATING"
-
-		currentIndex = 1
-
-		local validIndex = findValidIndex()
-
-		if validIndex then
-
-			currentIndex = validIndex
-			spectateCharacter(currentIndex)
-
-		else
-
-			spectating = false
-			spectateButton.Text = "SPECTATE"
-			nameLabel.Text = ""
-
-			warn("No valid characters/NPCs to spectate.")
-
-		end
 	end
 
 end)
