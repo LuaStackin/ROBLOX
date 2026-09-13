@@ -6,7 +6,7 @@ local CurrentIndex = 1
 
 local spectating = true
 game:GetService('RunService').RenderStepped:Connect(function()
-    Characters = Characters:GetChildren()
+    Characters = workspace.Characters:GetChildren()
 
 	game.Players.LocalPlayer.CameraMode = 'Classic'
 	game.Players.LocalPlayer.CameraMaxZoomDistance = 1000
