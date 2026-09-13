@@ -30,7 +30,7 @@ game:GetService('RunService').RenderStepped:Connect(function()
 	game.Players.LocalPlayer.CameraMaxZoomDistance = 1000
 
 	game.Lighting.GlobalShadows = false
-	game.Lighting.Brightness = 1000
+	game.Lighting.Brightness = 100
 
 	if CurrentSubject then
 		workspace.CurrentCamera.CameraSubject = CurrentSubject
@@ -150,13 +150,6 @@ local function getSpectateSubject(character)
 		return nil
 	end
 
-	-- Prefer Humanoid
-	local humanoid = character:FindFirstChildOfClass("Humanoid")
-
-	if humanoid then
-		return humanoid
-	end
-
 	-- Otherwise find the first BasePart
 	local basePart = character:FindFirstChildWhichIsA("BasePart", true)
 
@@ -164,6 +157,14 @@ local function getSpectateSubject(character)
 		return basePart
 	end
 
+
+	-- Prefer Humanoid
+	local humanoid = character:FindFirstChildOfClass("Humanoid")
+
+	if humanoid then
+		return humanoid
+	end
+    
 	return nil
 end
 
