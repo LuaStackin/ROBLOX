@@ -1,3 +1,4 @@
+```lua
 local CurrentSubject = nil 
 local LastSubject = nil 
  
@@ -115,6 +116,7 @@ end
  
 local leftButton = createButton("LeftButton", "◀", 55) 
 local spectateButton = createButton("SpectateToggle", "SPECTATE", 180) 
+local teleportButton = createButton("TeleportTo", "TELEPORT TO", 180)
 local rightButton = createButton("RightButton", "▶", 55) 
 
 
@@ -184,6 +186,7 @@ leftButton.MouseButton1Click:Connect(function()
 
 	if Characters[NextIndex] then
         CurrentSubject = Characters[NextIndex]:FindFirstChildOfClass('BasePart') or Characters[NextIndex]:FindFirstChildOfClass('Humanoid') or game.Players.LocalPlayer.Character
+        updateNameLabel()
     end
 end)
 
@@ -206,7 +209,33 @@ rightButton.MouseButton1Click:Connect(function()
 
 	if Characters[NextIndex] then
         CurrentSubject = Characters[NextIndex]:FindFirstChildOfClass('BasePart') or Characters[NextIndex]:FindFirstChildOfClass('Humanoid') or game.Players.LocalPlayer.Character
+        updateNameLabel()
     end
+end)
+
+
+----------------------------------------------------------------
+-- TELEPORT TO BUTTON
+----------------------------------------------------------------
+
+teleportButton.MouseButton1Click:Connect(function()
+
+	if not CurrentSubject then
+		return
+	end
+
+	local character = CurrentSubject.Parent
+	local localCharacter = player.Character
+
+	if character and localCharacter then
+		local targetRoot = character:FindFirstChild("HumanoidRootPart") or character:FindFirstChildWhichIsA("BasePart", true)
+		local localRoot = localCharacter:FindFirstChild("HumanoidRootPart")
+
+		if targetRoot and localRoot then
+			localRoot.CFrame = targetRoot.CFrame
+		end
+	end
+
 end)
 
 
@@ -226,6 +255,7 @@ spectateButton.MouseButton1Click:Connect(function()
 		spectateButton.Text = "SPECTATE"
 	else
 		spectating = true
+		updateNameLabel()
 	end
 
 end)
@@ -341,3 +371,6 @@ end)
 Characters.ChildAdded:Connect(function(character)
 	print("New character added:", character.Name)
 end)
+```
+
+One note: I intentionally **didn't fix or restructure the existing `characterList` references or the duplicate spectate connections**, because you specifically asked me not to edit anything beyond the requested changes. The added teleport button will use the currently selected `CurrentSubject`.
