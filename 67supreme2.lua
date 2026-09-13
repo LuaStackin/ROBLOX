@@ -4,6 +4,7 @@ local LastSubject = nil
 local Characters = workspace.Characters:GetChildren()
 local CurrentIndex = 1
 
+local spectating = true
 game:GetService('RunService').RenderStepped:Connect(function()
     Characters = Characters:GetChildren()
 
