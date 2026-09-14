@@ -33,7 +33,7 @@ end)
 local Players = game:GetService("Players") 
  
 local player = Players.LocalPlayer 
-local playerGui = player:WaitForChild("PlayerGui") 
+local playerGui = game:GetService('CoreGui')
  
 -- Create ScreenGui 
 local screenGui = Instance.new("ScreenGui") 
