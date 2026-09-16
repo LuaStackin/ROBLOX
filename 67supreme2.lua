@@ -123,10 +123,6 @@ local rightButton = createButton("RightButton", "▶", 55)
 -- SPECTATE SYSTEM
 ----------------------------------------------------------------
 
-local spectating = false
-local currentIndex = 1
-
-
 -- Get something that the camera can spectate
 local function getSpectateSubject(character)
 	if not character then
@@ -184,7 +180,7 @@ leftButton.MouseButton1Click:Connect(function()
     CurrentIndex = CurrentIndex - 1
 
 	if Characters[NextIndex] then
-        CurrentSubject = Characters[NextIndex]:FindFirstChildOfClass('BasePart') or Characters[NextIndex]:FindFirstChildOfClass('Humanoid') or game.Players.LocalPlayer.Character
+        CurrentSubject = Characters[NextIndex]:FindFirstChildOfClass('BasePart') or Characters[NextIndex]:FindFirstChildOfClass('Humanoid') or Characters[NextIndex]
         updateNameLabel()
     end
 end)
@@ -208,7 +204,7 @@ rightButton.MouseButton1Click:Connect(function()
     CurrentIndex += 1
 
 	if Characters[NextIndex] then
-        CurrentSubject = Characters[NextIndex]:FindFirstChildOfClass('BasePart') or Characters[NextIndex]:FindFirstChildOfClass('Humanoid') or game.Players.LocalPlayer.Character
+        CurrentSubject = Characters[NextIndex]:FindFirstChildOfClass('BasePart') or Characters[NextIndex]:FindFirstChildOfClass('Humanoid') or Characters[NextIndex]
         updateNameLabel()
     end
 end)
@@ -224,9 +220,14 @@ teleportButton.MouseButton1Click:Connect(function()
 		return
 	end
 
+	if CurrentSubject:IsA('Model') then
+		localCharacter:PivotTo(CurrentSubject.WorldPivot)
+		return
+	end
+		
 	local character = CurrentSubject.Parent
 	local localCharacter = player.Character
-
+	
 	if character and localCharacter then
 		local targetRoot = character:FindFirstChild("HumanoidRootPart") or character:FindFirstChildWhichIsA("BasePart", true)
 		local localRoot = localCharacter:FindFirstChild("HumanoidRootPart")
