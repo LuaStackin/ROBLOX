@@ -175,6 +175,9 @@ local function AZTN_fake_script() -- SpectateUI.Handler
 		local Camera = workspace.CurrentCamera
 		CurrentCharacters = Characters:GetChildren()
 		
+		Player.CameraMode = Enum.CameraMode.Classic
+	    Player.CameraMaxZoomDistance = 1000
+		
 		if not Spectating then
 			Camera.CameraSubject = Character().Humanoid
 			return
