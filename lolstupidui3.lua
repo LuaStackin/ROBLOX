@@ -13,6 +13,10 @@ local Subject = Instance.new("TextLabel")
 local UICorner_3 = Instance.new("UICorner")
 local Index = Instance.new("TextLabel")
 local UICorner_4 = Instance.new("UICorner")
+local Teleport = Instance.new("TextButton")
+local UICorner_5 = Instance.new("UICorner")
+local Spectate = Instance.new("TextButton")
+local UICorner_6 = Instance.new("UICorner")
 local Log = Instance.new("Frame")
 local ScrollingFrame = Instance.new("ScrollingFrame")
 local UIListLayout = Instance.new("UIListLayout")
@@ -21,7 +25,7 @@ local Template = Instance.new("TextButton")
 --Properties:
 
 SpectateUI.Name = "SpectateUI"
-SpectateUI.Parent = game.CoreGui
+SpectateUI.Parent = game:GetService('CoreGui')
 SpectateUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 Main.Name = "Main"
@@ -99,6 +103,38 @@ Index.TextWrapped = true
 
 UICorner_4.Parent = Index
 
+Teleport.Name = "Teleport"
+Teleport.Parent = Main
+Teleport.BackgroundColor3 = Color3.fromRGB(27, 27, 27)
+Teleport.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Teleport.BorderSizePixel = 0
+Teleport.Position = UDim2.new(0.679060638, 0, -0.184, 0)
+Teleport.Size = UDim2.new(0, 149, 0, 50)
+Teleport.Font = Enum.Font.Sarpanch
+Teleport.Text = "Teleport"
+Teleport.TextColor3 = Color3.fromRGB(255, 255, 255)
+Teleport.TextScaled = true
+Teleport.TextSize = 14.000
+Teleport.TextWrapped = true
+
+UICorner_5.Parent = Teleport
+
+Spectate.Name = "Spectate"
+Spectate.Parent = Main
+Spectate.BackgroundColor3 = Color3.fromRGB(27, 27, 27)
+Spectate.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Spectate.BorderSizePixel = 0
+Spectate.Position = UDim2.new(0.0293542072, 0, -0.184, 0)
+Spectate.Size = UDim2.new(0, 149, 0, 50)
+Spectate.Font = Enum.Font.Sarpanch
+Spectate.Text = "Spectate"
+Spectate.TextColor3 = Color3.fromRGB(255, 255, 255)
+Spectate.TextScaled = true
+Spectate.TextSize = 14.000
+Spectate.TextWrapped = true
+
+UICorner_6.Parent = Spectate
+
 Log.Name = "Log"
 Log.Parent = SpectateUI
 Log.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -135,7 +171,7 @@ Template.TextWrapped = true
 
 -- Scripts:
 
-local function KTRJBJL_fake_script() -- SpectateUI.Handler 
+local function HDKM_fake_script() -- SpectateUI.Handler 
 	local script = Instance.new('LocalScript', SpectateUI)
 
 	--[[ Core ]]--
@@ -160,6 +196,7 @@ local function KTRJBJL_fake_script() -- SpectateUI.Handler
 	
 	local function Secondary()
 		local Previous, Next = MainFrame:WaitForChild('Previous'), MainFrame:WaitForChild('Next')
+		local Teleport, Spectate = MainFrame:WaitForChild('Teleport'), MainFrame:WaitForChild('Spectate')
 		local ScrollingFrame, History = LogFrame:WaitForChild('ScrollingFrame'), {}
 		
 		Previous.MouseButton1Up:Connect(function()
@@ -178,8 +215,27 @@ local function KTRJBJL_fake_script() -- SpectateUI.Handler
 			end		
 		end)
 		
+		Spectate.MouseButton1Up:Connect(function()
+			Spectating = not Spectating
+		end)
+		
+		Teleport.MouseButton1Up:Connect(function()
+			local Character = CurrentCharacters[Index]
+			if Character then
+				local SpectatePart = Character:FindFirstChildOfClass('BasePart')
+				local HumanoidRootPart = Character().HumanoidRootPart
+				
+				if SpectatePart then
+					HumanoidRootPart.CFrame = SpectatePart.CFrame
+				else
+					HumanoidRootPart:PivotTo(Character.WorldPivot)
+				end
+			end	
+		end)
+		
 		local CharTemplateIndex = 5000000000
 		Characters.ChildAdded:Connect(function(Character)
+			
 			if #History >= 11 then
 				History[1]:Destroy(); 
 				table.remove(History, 1)
@@ -192,8 +248,14 @@ local function KTRJBJL_fake_script() -- SpectateUI.Handler
 			CharTemplateIndex -= 1
 			
 			Template.Text = `{Character.Name} - {os.date("%H:%M:%S")}`
-			Template.Parent = ScrollingFrame
+			for _, PlayerInstance in Players:GetPlayers() do
+				if PlayerInstance.Character == Character then
+					Template.Name = `Player - {os.date("%H:%M:%S")}`
+					Template.TextColor3 = Color3.fromRGB(255, 0, 0)
+				end
+			end
 			
+			Template.Parent = ScrollingFrame
 			Template.Visible = true
 		end)
 	end
@@ -233,4 +295,4 @@ local function KTRJBJL_fake_script() -- SpectateUI.Handler
 	RunService.RenderStepped:Connect(Main)
 	Secondary()
 end
-coroutine.wrap(KTRJBJL_fake_script)()
+coroutine.wrap(HDKM_fake_script)()
