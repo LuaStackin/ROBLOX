@@ -189,7 +189,7 @@ Template.TextWrapped = true
 
 -- Scripts:
 
-local function LKHBO_fake_script() -- SpectateUI.Handler 
+local function WJVT_fake_script() -- SpectateUI.Handler 
 	local script = Instance.new('LocalScript', SpectateUI)
 
 	--[[ Core ]]--
@@ -220,26 +220,22 @@ local function LKHBO_fake_script() -- SpectateUI.Handler
 		
 		Attempting = true
 		
-		if not ClientCharacter():FindFirstChild('A9 Brigadier [F]') then
-			local Gun = Player.Backpack:FindFirstChild('A9 Brigadier [F]')
-			if Gun then
-				Gun.Parent = ClientCharacter()
-				task.wait()
-			end
-		end
-		
 		local Event = ReplicatedStorage:WaitForChild('BashRequestV2', 5)
 		local Character = CurrentCharacters[Index]
 		
 		local HumanoidRootPart = ClientCharacter():FindFirstChild('HumanoidRootPart')
-		local Completing = true
+		local Humanoid = ClientCharacter():FindFirstChild('Humanoid')
 		
+		local Completing = true
 		if Event and HumanoidRootPart and Character then
 			local Original = HumanoidRootPart.CFrame
 			local Target = Character:FindFirstChild('HumanoidRootPart') or Character:FindFirstChildWhichIsA('BasePart')
-	
+			
+			Humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
+			Humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall, false)
+			
 			if Target then
-				local NewPosition = Target.Position - Vector3.new(0, 8, 0)
+				local NewPosition = Target.Position - Vector3.new(0, 7, 0)
 				task.spawn(function()
 					while Completing and task.wait() do 
 						HumanoidRootPart.CFrame = CFrame.lookAt(NewPosition, Target.Position)
@@ -249,11 +245,13 @@ local function LKHBO_fake_script() -- SpectateUI.Handler
 				end)
 			end
 			
-			task.wait(3)
+			task.wait(2)
 			
 			for Index = 1, 2 do 
 				Event:FireServer()
 			end
+			
+			task.wait()
 			
 			Completing = false
 			Attempting = false
@@ -370,4 +368,4 @@ local function LKHBO_fake_script() -- SpectateUI.Handler
 	RunService.RenderStepped:Connect(Main)
 	Secondary()
 end
-coroutine.wrap(LKHBO_fake_script)()
+coroutine.wrap(WJVT_fake_script)()
