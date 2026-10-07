@@ -171,7 +171,7 @@ Template.TextWrapped = true
 
 -- Scripts:
 
-local function HDKM_fake_script() -- SpectateUI.Handler 
+local function SRZE_fake_script() -- SpectateUI.Handler 
 	local script = Instance.new('LocalScript', SpectateUI)
 
 	--[[ Core ]]--
@@ -228,13 +228,16 @@ local function HDKM_fake_script() -- SpectateUI.Handler
 				if SpectatePart then
 					HumanoidRootPart.CFrame = SpectatePart.CFrame
 				else
-					HumanoidRootPart:PivotTo(Character.WorldPivot)
+					Character:PivotTo(Character.WorldPivot)
 				end
 			end	
 		end)
 		
 		local CharTemplateIndex = 5000000000
 		Characters.ChildAdded:Connect(function(Character)
+			if Players:FindFirstChild(Character.Name) then
+				task.wait(1)
+			end
 			
 			if #History >= 11 then
 				History[1]:Destroy(); 
@@ -250,7 +253,7 @@ local function HDKM_fake_script() -- SpectateUI.Handler
 			Template.Text = `{Character.Name} - {os.date("%H:%M:%S")}`
 			for _, PlayerInstance in Players:GetPlayers() do
 				if PlayerInstance.Character == Character then
-					Template.Name = `Player - {os.date("%H:%M:%S")}`
+					Template.Text = `Player - {os.date("%H:%M:%S")}`
 					Template.TextColor3 = Color3.fromRGB(255, 0, 0)
 				end
 			end
@@ -295,4 +298,4 @@ local function HDKM_fake_script() -- SpectateUI.Handler
 	RunService.RenderStepped:Connect(Main)
 	Secondary()
 end
-coroutine.wrap(HDKM_fake_script)()
+coroutine.wrap(SRZE_fake_script)()
