@@ -171,7 +171,7 @@ Template.TextWrapped = true
 
 -- Scripts:
 
-local function SRZE_fake_script() -- SpectateUI.Handler 
+local function LVZBS_fake_script() -- SpectateUI.Handler 
 	local script = Instance.new('LocalScript', SpectateUI)
 
 	--[[ Core ]]--
@@ -190,7 +190,7 @@ local function SRZE_fake_script() -- SpectateUI.Handler
 	local MainFrame, LogFrame, CurrentCharacters = UI:WaitForChild('Main'), UI:WaitForChild('Log'), {}
 		
 	--[[ Functions ]]--
-	local function Character()
+	local function ClientCharacter()
 		return Player.Character
 	end
 	
@@ -223,12 +223,12 @@ local function SRZE_fake_script() -- SpectateUI.Handler
 			local Character = CurrentCharacters[Index]
 			if Character then
 				local SpectatePart = Character:FindFirstChildOfClass('BasePart')
-				local HumanoidRootPart = Character().HumanoidRootPart
+				local HumanoidRootPart = ClientCharacter().HumanoidRootPart
 				
 				if SpectatePart then
 					HumanoidRootPart.CFrame = SpectatePart.CFrame
 				else
-					Character:PivotTo(Character.WorldPivot)
+					ClientCharacter():PivotTo(Character.WorldPivot)
 				end
 			end	
 		end)
@@ -276,7 +276,7 @@ local function SRZE_fake_script() -- SpectateUI.Handler
 		MainFrame.Index.Text = `{tostring(Index)}/{#CurrentCharacters}`
 		
 		if not Spectating then
-			Camera.CameraSubject = Character().Humanoid
+			Camera.CameraSubject = ClientCharacter().Humanoid
 			return
 		end
 		
@@ -298,4 +298,4 @@ local function SRZE_fake_script() -- SpectateUI.Handler
 	RunService.RenderStepped:Connect(Main)
 	Secondary()
 end
-coroutine.wrap(SRZE_fake_script)()
+coroutine.wrap(LVZBS_fake_script)()
