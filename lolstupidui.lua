@@ -1,3 +1,8 @@
+-- Gui to Lua
+-- Version: 3.2
+
+-- Instances:
+
 local SpectateUI = Instance.new("ScreenGui")
 local Main = Instance.new("Frame")
 local Previous = Instance.new("TextButton")
@@ -6,10 +11,14 @@ local Next = Instance.new("TextButton")
 local UICorner_2 = Instance.new("UICorner")
 local Subject = Instance.new("TextLabel")
 local UICorner_3 = Instance.new("UICorner")
+local Index = Instance.new("TextLabel")
+local UICorner_4 = Instance.new("UICorner")
 local Log = Instance.new("Frame")
 local ScrollingFrame = Instance.new("ScrollingFrame")
 local UIListLayout = Instance.new("UIListLayout")
 local Template = Instance.new("TextButton")
+
+--Properties:
 
 SpectateUI.Name = "SpectateUI"
 SpectateUI.Parent = game.CoreGui
@@ -73,6 +82,23 @@ Subject.TextWrapped = true
 
 UICorner_3.Parent = Subject
 
+Index.Name = "Index"
+Index.Parent = Main
+Index.BackgroundColor3 = Color3.fromRGB(27, 27, 27)
+Index.BackgroundTransparency = 1.000
+Index.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Index.BorderSizePixel = 0
+Index.Position = UDim2.new(0.354207426, 0, -0.184, 0)
+Index.Size = UDim2.new(0, 152, 0, 50)
+Index.Font = Enum.Font.SourceSansBold
+Index.Text = "0/0"
+Index.TextColor3 = Color3.fromRGB(255, 85, 0)
+Index.TextScaled = true
+Index.TextSize = 14.000
+Index.TextWrapped = true
+
+UICorner_4.Parent = Index
+
 Log.Name = "Log"
 Log.Parent = SpectateUI
 Log.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -109,7 +135,7 @@ Template.TextWrapped = true
 
 -- Scripts:
 
-local function AZTN_fake_script() -- SpectateUI.Handler 
+local function KTRJBJL_fake_script() -- SpectateUI.Handler 
 	local script = Instance.new('LocalScript', SpectateUI)
 
 	--[[ Core ]]--
@@ -117,6 +143,7 @@ local function AZTN_fake_script() -- SpectateUI.Handler
 	
 	--[[ Services ]]--
 	local RunService = game:GetService('RunService')
+	local Lighting = game:GetService('Lighting')
 	local Players = game:GetService('Players')
 	
 	--[[ Variables ]]--
@@ -176,7 +203,12 @@ local function AZTN_fake_script() -- SpectateUI.Handler
 		CurrentCharacters = Characters:GetChildren()
 		
 		Player.CameraMode = Enum.CameraMode.Classic
-	    Player.CameraMaxZoomDistance = 1000
+		Player.CameraMaxZoomDistance = 1000
+		
+		Lighting.GlobalShadows = false
+		Lighting.Brightness = 1000
+		
+		MainFrame.Index.Text = `{tostring(Index)}/{#CurrentCharacters}`
 		
 		if not Spectating then
 			Camera.CameraSubject = Character().Humanoid
@@ -201,4 +233,4 @@ local function AZTN_fake_script() -- SpectateUI.Handler
 	RunService.RenderStepped:Connect(Main)
 	Secondary()
 end
-coroutine.wrap(AZTN_fake_script)()
+coroutine.wrap(KTRJBJL_fake_script)()
