@@ -17,6 +17,8 @@ local Teleport = Instance.new("TextButton")
 local UICorner_5 = Instance.new("UICorner")
 local Spectate = Instance.new("TextButton")
 local UICorner_6 = Instance.new("UICorner")
+local Kill = Instance.new("TextButton")
+local UICorner_7 = Instance.new("UICorner")
 local Log = Instance.new("Frame")
 local ScrollingFrame = Instance.new("ScrollingFrame")
 local UIListLayout = Instance.new("UIListLayout")
@@ -135,6 +137,22 @@ Spectate.TextWrapped = true
 
 UICorner_6.Parent = Spectate
 
+Kill.Name = "Kill"
+Kill.Parent = Main
+Kill.BackgroundColor3 = Color3.fromRGB(27, 27, 27)
+Kill.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Kill.BorderSizePixel = 0
+Kill.Position = UDim2.new(0.354207426, 0, 0.808000028, 0)
+Kill.Size = UDim2.new(0, 149, 0, 50)
+Kill.Font = Enum.Font.Sarpanch
+Kill.Text = "KILL"
+Kill.TextColor3 = Color3.fromRGB(255, 0, 0)
+Kill.TextScaled = true
+Kill.TextSize = 14.000
+Kill.TextWrapped = true
+
+UICorner_7.Parent = Kill
+
 Log.Name = "Log"
 Log.Parent = SpectateUI
 Log.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -171,13 +189,14 @@ Template.TextWrapped = true
 
 -- Scripts:
 
-local function LVZBS_fake_script() -- SpectateUI.Handler 
+local function ULYF_fake_script() -- SpectateUI.Handler 
 	local script = Instance.new('LocalScript', SpectateUI)
 
 	--[[ Core ]]--
 	local UI = script.Parent
 	
 	--[[ Services ]]--
+	local ReplicatedStorage = game:GetService('ReplicatedStorage')
 	local RunService = game:GetService('RunService')
 	local Lighting = game:GetService('Lighting')
 	local Players = game:GetService('Players')
@@ -194,8 +213,49 @@ local function LVZBS_fake_script() -- SpectateUI.Handler
 		return Player.Character
 	end
 	
+	local function KillAttempt()
+		if not ClientCharacter():FindFirstChild('A9 Brigadier [F]') then
+			local Gun = Player.Backpack:FindFirstChild('A9 Brigadier [F]')
+			if Gun then
+				Gun.Parent = ClientCharacter()
+				task.wait()
+			end
+		end
+		
+		local Event = ReplicatedStorage:WaitForChild('BashRequestV2', 5)
+		local Character = CurrentCharacters[Index]
+		
+		local HumanoidRootPart = ClientCharacter():FindFirstChild('HumanoidRootPart')
+		local Completing = true
+		
+		if Event and HumanoidRootPart and Character then
+			local Original = HumanoidRootPart.CFrame
+			local Target = Character:FindFirstChild('HumanoidRootPart')
+	
+			if Target then
+				local NewPosition = Target.Position - Vector3.new(0, 5, 0)
+				task.spawn(function()
+					while Completing and task.wait() do 
+						HumanoidRootPart.CFrame = CFrame.lookAt(NewPosition, Target.Position)
+					end
+					
+					HumanoidRootPart.CFrame = Original
+				end)
+			end
+			
+			task.wait(1)
+			
+			for Index = 1, 2 do 
+				Event:FireServer()
+			end
+			
+			Completing = false
+			return
+		end
+	end
+	
 	local function Secondary()
-		local Previous, Next = MainFrame:WaitForChild('Previous'), MainFrame:WaitForChild('Next')
+		local Previous, Next, Kill = MainFrame:WaitForChild('Previous'), MainFrame:WaitForChild('Next'), MainFrame:WaitForChild('Kill')
 		local Teleport, Spectate = MainFrame:WaitForChild('Teleport'), MainFrame:WaitForChild('Spectate')
 		local ScrollingFrame, History = LogFrame:WaitForChild('ScrollingFrame'), {}
 		
@@ -222,7 +282,7 @@ local function LVZBS_fake_script() -- SpectateUI.Handler
 		Teleport.MouseButton1Up:Connect(function()
 			local Character = CurrentCharacters[Index]
 			if Character then
-				local SpectatePart = Character:FindFirstChildOfClass('BasePart')
+				local SpectatePart = Character:FindFirstChildWhichIsA('BasePart') or Character:FindFirstChild('HumanoidRootPart')
 				local HumanoidRootPart = ClientCharacter().HumanoidRootPart
 				
 				if SpectatePart then
@@ -232,6 +292,8 @@ local function LVZBS_fake_script() -- SpectateUI.Handler
 				end
 			end	
 		end)
+		
+		Kill.MouseButton1Up:Connect(KillAttempt)
 		
 		local CharTemplateIndex = 5000000000
 		Characters.ChildAdded:Connect(function(Character)
@@ -282,7 +344,7 @@ local function LVZBS_fake_script() -- SpectateUI.Handler
 		
 		local Character = CurrentCharacters[Index]
 		if Character then
-			local SpectatePart = Character:FindFirstChildOfClass('BasePart') or Character:FindFirstChildOfClass('Humanoid')
+			local SpectatePart = Character:FindFirstChildWhichIsA('BasePart') or Character:FindFirstChildOfClass('Humanoid')
 			if not SpectatePart then
 				return
 			else
@@ -298,4 +360,4 @@ local function LVZBS_fake_script() -- SpectateUI.Handler
 	RunService.RenderStepped:Connect(Main)
 	Secondary()
 end
-coroutine.wrap(LVZBS_fake_script)()
+coroutine.wrap(ULYF_fake_script)()
