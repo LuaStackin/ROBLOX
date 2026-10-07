@@ -189,7 +189,7 @@ Template.TextWrapped = true
 
 -- Scripts:
 
-local function ULYF_fake_script() -- SpectateUI.Handler 
+local function LKHBO_fake_script() -- SpectateUI.Handler 
 	local script = Instance.new('LocalScript', SpectateUI)
 
 	--[[ Core ]]--
@@ -205,7 +205,7 @@ local function ULYF_fake_script() -- SpectateUI.Handler
 	local Characters = workspace:WaitForChild('Characters')
 	local Player = Players.LocalPlayer 
 	
-	local Spectating, Index = true, 1
+	local Spectating, Attempting, Index = true, false, 1
 	local MainFrame, LogFrame, CurrentCharacters = UI:WaitForChild('Main'), UI:WaitForChild('Log'), {}
 		
 	--[[ Functions ]]--
@@ -214,6 +214,12 @@ local function ULYF_fake_script() -- SpectateUI.Handler
 	end
 	
 	local function KillAttempt()
+		if Attempting then
+			return
+		end
+		
+		Attempting = true
+		
 		if not ClientCharacter():FindFirstChild('A9 Brigadier [F]') then
 			local Gun = Player.Backpack:FindFirstChild('A9 Brigadier [F]')
 			if Gun then
@@ -230,7 +236,7 @@ local function ULYF_fake_script() -- SpectateUI.Handler
 		
 		if Event and HumanoidRootPart and Character then
 			local Original = HumanoidRootPart.CFrame
-			local Target = Character:FindFirstChild('HumanoidRootPart')
+			local Target = Character:FindFirstChild('HumanoidRootPart') or Character:FindFirstChildWhichIsA('BasePart')
 	
 			if Target then
 				local NewPosition = Target.Position - Vector3.new(0, 8, 0)
@@ -243,15 +249,19 @@ local function ULYF_fake_script() -- SpectateUI.Handler
 				end)
 			end
 			
-			task.wait(1)
+			task.wait(3)
 			
 			for Index = 1, 2 do 
 				Event:FireServer()
 			end
 			
 			Completing = false
+			Attempting = false
+			
 			return
 		end
+		
+		Attempting = false
 	end
 	
 	local function Secondary()
@@ -360,4 +370,4 @@ local function ULYF_fake_script() -- SpectateUI.Handler
 	RunService.RenderStepped:Connect(Main)
 	Secondary()
 end
-coroutine.wrap(ULYF_fake_script)()
+coroutine.wrap(LKHBO_fake_script)()
