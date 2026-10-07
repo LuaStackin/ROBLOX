@@ -233,7 +233,7 @@ local function ULYF_fake_script() -- SpectateUI.Handler
 			local Target = Character:FindFirstChild('HumanoidRootPart')
 	
 			if Target then
-				local NewPosition = Target.Position - Vector3.new(0, 5, 0)
+				local NewPosition = Target.Position - Vector3.new(0, 8, 0)
 				task.spawn(function()
 					while Completing and task.wait() do 
 						HumanoidRootPart.CFrame = CFrame.lookAt(NewPosition, Target.Position)
