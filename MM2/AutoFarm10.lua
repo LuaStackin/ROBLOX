@@ -31,6 +31,8 @@ local Player = Players.LocalPlayer
 --// Functions
 local function ContainerCheck(Child)
     if Child:IsA('Model') then
+        print(Child.Name, Child:FindFirstChild('CoinContainer'))
+        print(Child:WaitForChild('CoinContainer', 30))
         local CoinContainer = Child:WaitForChild('CoinContainer', 15)
         if CoinContainer then
             Container = CoinContainer
