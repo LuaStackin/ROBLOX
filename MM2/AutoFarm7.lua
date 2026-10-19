@@ -72,7 +72,7 @@ local function Tween(String)
         return CurrentTween:Cancel()
     end
 
-    if String == 'Create' and HumanoidRootPart() and (CurrentTween.PlaybackState == Enum.PlaybackState.Completed or CurrentTween.PlaybackState == Enum.PlaybackState.Cancelled) then
+    if String == 'Create' and HumanoidRootPart() and (not CurrentTween or (CurrentTween.PlaybackState == Enum.PlaybackState.Completed or CurrentTween.PlaybackState == Enum.PlaybackState.Cancelled)) then
         CurrentTween = TweenService:Create(HumanoidRootPart(), TweenInfo.new(1), {Position = CurrentCoin.Position})
         return CurrentTween:Play()
     end
