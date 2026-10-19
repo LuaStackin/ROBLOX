@@ -4,9 +4,10 @@ if _G.AutoFarmScriptConnections ~= nil then
     _G.AutoFarmScriptConnections[2]:Disconnect()
 
     task.cancel(_G.AutoFarmScriptConnections[3])
+    _G.AutoFarmScriptConnections[4]:Disconnect()
 
-    if _G.AutoFarmScriptConnections[4] ~= nil then
-        for _, Connection in _G.AutoFarmScriptConnections[4] do
+    if _G.AutoFarmScriptConnections[5] ~= nil then
+        for _, Connection in _G.AutoFarmScriptConnections[5] do
             pcall(function()
                 Connection:Disconnect()
             end)
@@ -29,8 +30,7 @@ local Player = Players.LocalPlayer
 --// Functions
 local function ContainerCheck(Child)
     if Child:IsA('Model') then
-        warn(Child.Name)
-        local CoinContainer = Child:WaitForChild('CoinContainer', 30)
+        local CoinContainer = Child:WaitForChild('CoinContainer', 15)
         if CoinContainer then
             Container = CoinContainer
             print('Found Container')
@@ -54,33 +54,43 @@ local function MurdererCheck(Player)
     end
 end
 
+local function NoclipRuntime()
+    local HumanoidPlayer.Character and Player.Character:FindFirstChild('Humanoid')
+    if Humanoid then 
+        return Humanoid:ChangeState(11)
+    end
+end
+
 local function HumanoidRootPart()
     return (Player.Character and Player.Character:FindFirstChild('HumanoidRootPart'))
 end
 
 local function Tween(String)
-    if String == 'Cancel' and CurrentTween then
+    if String == 'Cancel' and CurrentTween and CurrentTween.PlaybackState ~= Enum.PlaybackState.Cancelled then
         CurrentCoin = nil
-        CurrentTween:Cancel()
+        return CurrentTween:Cancel()
     end
 
-    local HRP = HumanoidRootPart()
-    if String == 'Create' and HRP then
-        CurrentTween = TweenService:Create(HRP, TweenInfo.new(1), {Position = CurrentCoin.Position})
-        CurrentTween:Play()
+    if String == 'Create' and HumanoidRootPart() and (CurrentTween.PlaybackState == Enum.PlaybackState.Completed or CurrentTween.PlaybackState == Enum.PlaybackState.Cancelled) then
+        CurrentTween = TweenService:Create(HumanoidRootPart(), TweenInfo.new(1), {Position = CurrentCoin.Position})
+        return CurrentTween:Play()
     end
 end
 
 --// Connections
 local ChildAdded; ChildAdded = workspace.ChildAdded:Connect(ContainerCheck)
 local PlayerAdded; PlayerAdded = Players.PlayerAdded:Connect(MurdererCheck)
+local Stepped; Stepped = RunService.Stepped:Connect(NoclipRuntime)
 
 local Runtime; Runtime = task.spawn(function()
     while task.wait(0.25) do
         local Success, Error = pcall(function()
-            if Container then
-                warn(Container, Container.Parent)
+            local Alive = Player:GetAttribute('Alive') 
+            if Alive then
+                return Tween('Cancel')
+            end
 
+            if Container and Alive then
                 if (not CurrentCoin) or (CurrentCoin and CurrentCoin.Parent == nil) then
                     local Children = Container:GetChildren()
                     CurrentCoin = Children[math.random(1, #Children)]
@@ -108,8 +118,9 @@ local Runtime; Runtime = task.spawn(function()
     end
 end)
 
+
 --// Connection Storage
-_G.AutoFarmScriptConnections = {[1] = ChildAdded, [2] = PlayerAdded, [3] = Runtime, [4] = Settings.Connections}
+_G.AutoFarmScriptConnections = {[1] = ChildAdded, [2] = PlayerAdded, [3] = Runtime, [4] = Stepped, [5] = Settings.Connections}
 
 --// Final Checks
 for _, Player in Players:GetPlayers() do
