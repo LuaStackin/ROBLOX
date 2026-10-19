@@ -19,6 +19,7 @@ end
 
 --// Services
 local Players = game:GetService('Players')
+local RunService = game:GetService('RunService')
 local TweenService = game:GetService('TweenService')
 
 --// Variables
