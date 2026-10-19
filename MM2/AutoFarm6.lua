@@ -49,7 +49,7 @@ local function MurdererCheck(Player)
     end)
 
     if _G.AutoFarmScriptConnections then
-        table.insert(_G.AutoFarmScriptConnections[4], Connection)
+        table.insert(_G.AutoFarmScriptConnections[5], Connection)
     else
         table.insert(Settings.Connections, Connection)
     end
