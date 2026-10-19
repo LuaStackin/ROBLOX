@@ -55,7 +55,7 @@ local function MurdererCheck(Player)
 end
 
 local function NoclipRuntime()
-    local HumanoidPlayer.Character and Player.Character:FindFirstChild('Humanoid')
+    local Humanoid = Player.Character and Player.Character:FindFirstChild('Humanoid')
     if Humanoid then 
         return Humanoid:ChangeState(11)
     end
