@@ -87,7 +87,7 @@ local Runtime; Runtime = task.spawn(function()
     while task.wait(0.25) do
         local Success, Error = pcall(function()
             local Alive = Player:GetAttribute('Alive') 
-            if Alive then
+            if not Alive then
                 return Tween('Cancel')
             end
 
