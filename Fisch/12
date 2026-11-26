@@ -264,6 +264,7 @@ local function CreatePersistentMarker(FishID)
     Label.Parent = Billboard
 
     Scanner.LocationMarkers[FishID] = Marker
+    task.delay(30, Marker.Destroy, Marker)
 
     return Marker
 end
@@ -590,8 +591,9 @@ local function ReportFish(FishID)
 
     local IsAether = Data.Mutation == "Aether"
     local IsDivine = Rarity == "Divine Secret"
+    local HasHat = Data.Hat ~= nil
 
-    if IsAether or IsDivine then
+    if IsAether or IsDivine or HasHat then
         local LabelText = Name
             .. "\n" .. tostring(Rarity or "Unknown")
 
@@ -632,6 +634,18 @@ local function ReportFish(FishID)
 
             task.spawn(function()
                 SendNotification("DIVINE SECRET FOUND!\n" .. Name, 15)
+            end)
+        end
+    end
+
+    if HasHat then
+        local AlertKey = tostring(FishID) .. "_CompanionHat"
+
+        if not Scanner.Notified[AlertKey] then
+            Scanner.Notified[AlertKey] = true
+
+            task.spawn(function()
+                SendNotification("COMPANION HAT FOUND!\n" .. Name .. "\n" .. Data.Hat, 15)
             end)
         end
     end
