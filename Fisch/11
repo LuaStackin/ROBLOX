@@ -431,14 +431,6 @@ end
 local function RemoveFish(FishID)
     RemoveFishVisuals(FishID)
 
-    local Marker = Scanner.LocationMarkers[FishID]
-
-    if Marker then
-        pcall(function()
-            Marker:Destroy()
-        end)
-    end
-
     Scanner.LocationMarkers[FishID] = nil
     Scanner.LastKnownLocations[FishID] = nil
     Scanner.FishDatabase[FishID] = nil
