@@ -15,10 +15,15 @@ if Env.AetherFishScanner then
         end)
     end
 
-    -- Remove previous visual markers
     for _, Marker in pairs(Previous.LocationMarkers or {}) do
         pcall(function()
             Marker:Destroy()
+        end)
+    end
+
+    if Previous.MarkerFolder then
+        pcall(function()
+            Previous.MarkerFolder:Destroy()
         end)
     end
 
@@ -47,6 +52,7 @@ local Workspace = game:GetService("Workspace")
 local HttpService = game:GetService("HttpService")
 local StarterGui = game:GetService("StarterGui")
 local CoreGui = game:GetService("CoreGui")
+local RunService = game:GetService("RunService")
 
 local Event = ReplicatedStorage.packages.Net["RE/RoamingFish/Update"]
 local FishFolder = Workspace.active:WaitForChild("roamingFish")
@@ -59,12 +65,14 @@ local FishLibrary = require(
 -- CONFIGURATION
 --==================================================
 
-local WEBHOOK_URL = getgenv().FischWebhook
+local WEBHOOK_URL = "PASTE_YOUR_NEW_WEBHOOK_URL_HERE"
 
 local ENABLE_WEBHOOK = true
 local ENABLE_HIGHLIGHT = true
 local ENABLE_TRACKER = true
 local ENABLE_LAST_KNOWN_LOCATION = true
+
+local LOCATION_UPDATE_INTERVAL = 0.15
 
 --==================================================
 -- SCANNER DATA
@@ -72,7 +80,6 @@ local ENABLE_LAST_KNOWN_LOCATION = true
 
 local Scanner = {
     Running = true,
-
     Connections = {},
 
     FishDatabase = {},
@@ -88,12 +95,21 @@ local Scanner = {
 Env.AetherFishScanner = Scanner
 
 --==================================================
+-- PERSISTENT MARKER FOLDER
+--==================================================
+
+local MarkerFolder = Instance.new("Folder")
+MarkerFolder.Name = "AetherPersistentMarkers"
+MarkerFolder.Parent = Workspace
+
+Scanner.MarkerFolder = MarkerFolder
+
+--==================================================
 -- NOTIFICATIONS
 --==================================================
 
 local function SendNotification(Text, Duration)
 
-    -- Sound
     pcall(function()
         local TemporarySound = Instance.new("Sound")
         TemporarySound.SoundId = "rbxassetid://96524940709824"
@@ -105,7 +121,6 @@ local function SendNotification(Text, Duration)
         end)
     end)
 
-    -- Discord webhook
     if ENABLE_WEBHOOK
         and WEBHOOK_URL ~= ""
         and not string.find(
@@ -146,7 +161,6 @@ local function SendNotification(Text, Duration)
         end)
     end
 
-    -- Roblox notification
     return StarterGui:SetCore("SendNotification", {
         Title = "ALERT",
         Text = Text,
@@ -176,17 +190,101 @@ local function GetFishModel(Hitbox)
     return Hitbox:FindFirstAncestorOfClass("Model")
 end
 
+local function IsSpecial(Data)
+    if not Data then
+        return false
+    end
+
+    local Rarity = GetRarity(Data.Name or "")
+
+    return Data.Mutation == "Aether"
+        or Rarity == "Divine Secret"
+end
+
 --==================================================
--- LAST KNOWN LOCATION MARKER
+-- PERSISTENT LOCATION MARKER
 --==================================================
 
-local function UpdateLastKnownLocation(
-    FishID,
-    Hitbox,
-    Name,
-    Rarity,
-    Mutation
-)
+local function CreatePersistentMarker(FishID)
+    local Marker = Scanner.LocationMarkers[FishID]
+
+    if Marker and Marker.Parent then
+        return Marker
+    end
+
+    Marker = Instance.new("Part")
+    Marker.Name = "LastKnown_" .. tostring(FishID)
+    Marker.Size = Vector3.new(2, 2, 2)
+    Marker.Shape = Enum.PartType.Ball
+    Marker.Material = Enum.Material.Neon
+    Marker.Color = Color3.fromRGB(190, 0, 255)
+    Marker.Anchored = true
+    Marker.CanCollide = false
+    Marker.CanTouch = false
+    Marker.CanQuery = false
+    Marker.Transparency = 0.2
+    Marker.Parent = MarkerFolder
+
+    local Billboard = Instance.new("BillboardGui")
+    Billboard.Name = "LocationLabel"
+    Billboard.Size = UDim2.fromOffset(300, 90)
+    Billboard.StudsOffset = Vector3.new(0, 2.5, 0)
+    Billboard.AlwaysOnTop = true
+    Billboard.Adornee = Marker
+    Billboard.Parent = Marker
+
+    local Label = Instance.new("TextLabel")
+    Label.Name = "Label"
+    Label.Size = UDim2.fromScale(1, 1)
+    Label.BackgroundTransparency = 1
+    Label.TextColor3 = Color3.fromRGB(230, 170, 255)
+    Label.TextStrokeTransparency = 0
+    Label.TextScaled = true
+    Label.TextWrapped = true
+    Label.Font = Enum.Font.GothamBold
+    Label.Parent = Billboard
+
+    Scanner.LocationMarkers[FishID] = Marker
+
+    return Marker
+end
+
+local function UpdatePersistentMarker(FishID)
+    if not ENABLE_LAST_KNOWN_LOCATION then
+        return
+    end
+
+    local Location = Scanner.LastKnownLocations[FishID]
+
+    if not Location then
+        return
+    end
+
+    local Marker = CreatePersistentMarker(FishID)
+
+    if not Marker then
+        return
+    end
+
+    Marker.Position = Location.Position
+
+    local Billboard = Marker:FindFirstChild("LocationLabel")
+    local Label = Billboard and Billboard:FindFirstChild("Label")
+
+    if Label then
+        Label.Text = Location.Name
+            .. "\n" .. tostring(Location.Rarity or "Unknown")
+            .. "\nLAST KNOWN LOCATION"
+            .. "\n" .. string.format(
+                "%.1f, %.1f, %.1f",
+                Location.Position.X,
+                Location.Position.Y,
+                Location.Position.Z
+            )
+    end
+end
+
+local function SaveFishPosition(FishID, Hitbox, Name, Rarity, Mutation)
     if not ENABLE_LAST_KNOWN_LOCATION then
         return
     end
@@ -195,97 +293,21 @@ local function UpdateLastKnownLocation(
         return
     end
 
-    local IsSpecial = Mutation == "Aether"
-        or Rarity == "Divine Secret"
+    local IsAether = Mutation == "Aether"
+    local IsDivine = Rarity == "Divine Secret"
 
-    if not IsSpecial then
+    if not IsAether and not IsDivine then
         return
     end
 
-    local Position = Hitbox.Position
-
     Scanner.LastKnownLocations[FishID] = {
-        Position = Position,
+        Position = Hitbox.Position,
         Name = Name,
         Rarity = Rarity,
         Mutation = Mutation
     }
 
-    local Marker = Scanner.LocationMarkers[FishID]
-
-    if not Marker then
-        Marker = Instance.new("Part")
-        Marker.Name = "AetherLastKnown_" .. tostring(FishID)
-        Marker.Size = Vector3.new(1.5, 1.5, 1.5)
-        Marker.Shape = Enum.PartType.Ball
-        Marker.Material = Enum.Material.Neon
-        Marker.Color = Color3.fromRGB(190, 0, 255)
-        Marker.Anchored = true
-        Marker.CanCollide = false
-        Marker.CanTouch = false
-        Marker.CanQuery = false
-        Marker.Transparency = 0.2
-        Marker.Parent = Workspace
-
-        local Billboard = Instance.new("BillboardGui")
-        Billboard.Name = "LocationLabel"
-        Billboard.Size = UDim2.fromOffset(280, 85)
-        Billboard.AlwaysOnTop = true
-        Billboard.StudsOffset = Vector3.new(0, 2.5, 0)
-        Billboard.Parent = Marker
-
-        local Label = Instance.new("TextLabel")
-        Label.Name = "Label"
-        Label.Size = UDim2.fromScale(1, 1)
-        Label.BackgroundTransparency = 1
-        Label.TextColor3 = Color3.fromRGB(230, 170, 255)
-        Label.TextStrokeTransparency = 0
-        Label.TextScaled = true
-        Label.TextWrapped = true
-        Label.Font = Enum.Font.GothamBold
-        Label.Parent = Billboard
-
-        Scanner.LocationMarkers[FishID] = Marker
-    end
-
-    Marker.Position = Position
-
-    local Label = Marker:FindFirstChild("LocationLabel")
-        and Marker.LocationLabel:FindFirstChild("Label")
-
-    if Label then
-        Label.Text = Name
-            .. "\n" .. tostring(Rarity or "Unknown")
-            .. "\nLAST SEEN: "
-            .. string.format(
-                "%.1f, %.1f, %.1f",
-                Position.X,
-                Position.Y,
-                Position.Z
-            )
-    end
-end
-
---==================================================
--- REMOVE FISH VISUALS
---==================================================
-
-local function RemoveFishVisuals(FishID)
-    local Hitbox = Scanner.SpawnedFish[FishID]
-    local Model = GetFishModel(Hitbox)
-
-    if Model then
-        local Highlight = Model:FindFirstChild("AetherFishHighlight")
-        local Tracker = Model:FindFirstChild("AetherFishTracker")
-
-        if Highlight then
-            Highlight:Destroy()
-        end
-
-        if Tracker then
-            Tracker:Destroy()
-        end
-    end
+    UpdatePersistentMarker(FishID)
 end
 
 --==================================================
@@ -309,7 +331,6 @@ local function HighlightFish(FishID, LabelText)
         return
     end
 
-    -- Highlight
     if ENABLE_HIGHLIGHT then
         local Highlight = Model:FindFirstChild("AetherFishHighlight")
 
@@ -326,7 +347,6 @@ local function HighlightFish(FishID, LabelText)
         end
     end
 
-    -- Floating label
     if ENABLE_TRACKER then
         local Billboard = Model:FindFirstChild("AetherFishTracker")
 
@@ -362,7 +382,51 @@ local function HighlightFish(FishID, LabelText)
 end
 
 --==================================================
--- ALERT CHECKING
+-- REMOVE VISUALS
+--==================================================
+
+local function RemoveFishVisuals(FishID)
+    local Hitbox = Scanner.SpawnedFish[FishID]
+    local Model = GetFishModel(Hitbox)
+
+    if Model then
+        local Highlight = Model:FindFirstChild("AetherFishHighlight")
+        local Tracker = Model:FindFirstChild("AetherFishTracker")
+
+        if Highlight then Highlight:Destroy() end
+        if Tracker then Tracker:Destroy() end
+    end
+end
+
+local function RemoveFish(FishID)
+    RemoveFishVisuals(FishID)
+
+    local Marker = Scanner.LocationMarkers[FishID]
+
+    if Marker then
+        Marker:Destroy()
+    end
+
+    Scanner.LocationMarkers[FishID] = nil
+    Scanner.LastKnownLocations[FishID] = nil
+    Scanner.FishDatabase[FishID] = nil
+    Scanner.SpawnedFish[FishID] = nil
+    Scanner.LastPrinted[FishID] = nil
+
+    for Key in pairs(Scanner.Notified) do
+        if string.find(
+            Key,
+            tostring(FishID) .. "_",
+            1,
+            true
+        ) == 1 then
+            Scanner.Notified[Key] = nil
+        end
+    end
+end
+
+--==================================================
+-- REPORT FISH AND ALERTS
 --==================================================
 
 local function ReportFish(FishID)
@@ -409,9 +473,9 @@ local function ReportFish(FishID)
     end
 
     local IsAether = Data.Mutation == "Aether"
-    local IsDivineSecret = Rarity == "Divine Secret"
+    local IsDivine = Rarity == "Divine Secret"
 
-    if IsAether or IsDivineSecret then
+    if IsAether or IsDivine then
         local LabelText = Name
             .. "\n" .. tostring(Rarity or "Unknown")
 
@@ -420,11 +484,10 @@ local function ReportFish(FishID)
                 .. " | " .. tostring(Data.Mutation)
         end
 
-        -- Update highlight and location
         if Hitbox then
             HighlightFish(FishID, LabelText)
 
-            UpdateLastKnownLocation(
+            SaveFishPosition(
                 FishID,
                 Hitbox,
                 Name,
@@ -443,17 +506,14 @@ local function ReportFish(FishID)
 
             task.spawn(function()
                 pcall(function()
-                    SendNotification(
-                        "AETHER FOUND!\n" .. Name,
-                        15
-                    )
+                    SendNotification("AETHER FOUND!\n" .. Name, 15)
                 end)
             end)
         end
     end
 
     -- Divine Secret notification
-    if IsDivineSecret then
+    if IsDivine then
         local AlertKey = tostring(FishID) .. "_DivineSecret"
 
         if not Scanner.Notified[AlertKey] then
@@ -461,10 +521,7 @@ local function ReportFish(FishID)
 
             task.spawn(function()
                 pcall(function()
-                    SendNotification(
-                        "DIVINE SECRET FOUND!\n" .. Name,
-                        15
-                    )
+                    SendNotification("DIVINE SECRET FOUND!\n" .. Name, 15)
                 end)
             end)
         end
@@ -472,7 +529,7 @@ local function ReportFish(FishID)
 end
 
 --==================================================
--- REMOTE FISH DATA UPDATES
+-- REMOTE DATA UPDATES
 --==================================================
 
 Scanner.Connections.Remote = Event.OnClientEvent:Connect(function(UpdateTable)
@@ -482,38 +539,10 @@ Scanner.Connections.Remote = Event.OnClientEvent:Connect(function(UpdateTable)
 
     for FishID, Data in pairs(UpdateTable) do
         if Data == 0 then
-
-            -- Remove last known marker
-            local Marker = Scanner.LocationMarkers[FishID]
-
-            if Marker then
-                Marker:Destroy()
-            end
-
-            Scanner.LocationMarkers[FishID] = nil
-            Scanner.LastKnownLocations[FishID] = nil
-
-            RemoveFishVisuals(FishID)
-
-            Scanner.FishDatabase[FishID] = nil
-            Scanner.SpawnedFish[FishID] = nil
-            Scanner.LastPrinted[FishID] = nil
-
-            for Key in pairs(Scanner.Notified) do
-                if string.find(
-                    Key,
-                    tostring(FishID) .. "_",
-                    1,
-                    true
-                ) == 1 then
-                    Scanner.Notified[Key] = nil
-                end
-            end
-
+            RemoveFish(FishID)
             print("[FISH DESPAWNED]", FishID)
 
         elseif typeof(Data) == "table" then
-
             local Existing = Scanner.FishDatabase[FishID]
 
             if not Existing then
@@ -544,7 +573,7 @@ Scanner.Connections.Remote = Event.OnClientEvent:Connect(function(UpdateTable)
 end)
 
 --==================================================
--- SPAWNED FISH DETECTION
+-- FISH MODEL DETECTION
 --==================================================
 
 local function CheckObject(Object)
@@ -579,6 +608,11 @@ local function CheckObject(Object)
         Existing.Name = Object:GetAttribute("FishName")
     end
 
+    -- Restore existing last-known marker if model returns
+    if Scanner.LastKnownLocations[FishID] then
+        UpdatePersistentMarker(FishID)
+    end
+
     ReportFish(FishID)
 end
 
@@ -587,9 +621,67 @@ for _, Object in ipairs(FishFolder:GetDescendants()) do
     CheckObject(Object)
 end
 
--- Monitor newly spawned fish
+-- Detect newly spawned fish
 Scanner.Connections.Spawned =
     FishFolder.DescendantAdded:Connect(CheckObject)
+
+--==================================================
+-- CONTINUOUS POSITION SAMPLING
+--==================================================
+
+local Accumulator = 0
+
+Scanner.Connections.PositionUpdate =
+    RunService.Heartbeat:Connect(function(DeltaTime)
+
+    if not Scanner.Running then
+        return
+    end
+
+    Accumulator = Accumulator + DeltaTime
+
+    if Accumulator < LOCATION_UPDATE_INTERVAL then
+        return
+    end
+
+    Accumulator = 0
+
+    for FishID, Hitbox in pairs(Scanner.SpawnedFish) do
+        if Hitbox and Hitbox.Parent then
+            local Data = Scanner.FishDatabase[FishID]
+
+            if Data and IsSpecial(Data) then
+                local Name = Data.Name
+                    or Hitbox:GetAttribute("FishName")
+                    or "Unknown"
+
+                local Rarity = GetRarity(Name)
+
+                SaveFishPosition(
+                    FishID,
+                    Hitbox,
+                    Name,
+                    Rarity,
+                    Data.Mutation
+                )
+            end
+        else
+            -- Model may have streamed out.
+            -- Keep the last known location and marker.
+            Scanner.SpawnedFish[FishID] = nil
+        end
+    end
+
+    -- Recreate markers if the game deletes them
+    for FishID, Location in pairs(Scanner.LastKnownLocations) do
+        if not Scanner.LocationMarkers[FishID]
+            or not Scanner.LocationMarkers[FishID].Parent then
+
+            Scanner.LocationMarkers[FishID] = nil
+            UpdatePersistentMarker(FishID)
+        end
+    end
+end)
 
 --==================================================
 -- DISCONNECT
@@ -608,14 +700,16 @@ Scanner.Disconnect = function()
         end)
     end
 
-    -- Remove all location markers
     for _, Marker in pairs(Scanner.LocationMarkers) do
         pcall(function()
             Marker:Destroy()
         end)
     end
 
-    -- Remove fish highlights and trackers
+    if Scanner.MarkerFolder then
+        Scanner.MarkerFolder:Destroy()
+    end
+
     for FishID in pairs(Scanner.SpawnedFish) do
         RemoveFishVisuals(FishID)
     end
@@ -630,5 +724,6 @@ Scanner.Disconnect = function()
 end
 
 print("[FISH SCANNER] Running!")
-print("[FISH SCANNER] Watching for Aether mutations and Divine Secret fish.")
-print("[FISH SCANNER] Highlights, trackers and last-known locations enabled.")
+print("[FISH SCANNER] Aether and Divine Secret detection enabled.")
+print("[FISH SCANNER] Highlights and floating trackers enabled.")
+print("[FISH SCANNER] Persistent last-known location tracking enabled.")
