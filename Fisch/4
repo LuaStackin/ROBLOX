@@ -1,0 +1,474 @@
+
+local Env = getgenv()
+
+-- Clean up previous scanner
+if Env.AetherFishScanner then
+    local Previous = Env.AetherFishScanner
+    Previous.Running = false
+
+    for _, Connection in pairs(Previous.Connections or {}) do
+        pcall(function()
+            Connection:Disconnect()
+        end)
+    end
+
+    print("[FISH SCANNER] Previous instance disconnected.")
+end
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+local HttpService = game:GetService("HttpService")
+local StarterGui = game:GetService("StarterGui")
+local CoreGui = game:GetService("CoreGui")
+
+local Event = ReplicatedStorage.packages.Net["RE/RoamingFish/Update"]
+local FishFolder = Workspace.active:WaitForChild("roamingFish")
+
+local FishLibrary = require(
+    ReplicatedStorage.shared.modules.library.fish
+)
+
+--==================================================
+-- CONFIGURATION
+--==================================================
+
+local WEBHOOK_URL = getgenv().FischWebhook
+
+local ENABLE_WEBHOOK = true
+local ENABLE_HIGHLIGHT = true
+local ENABLE_TRACKER = true
+
+local Scanner = {
+    Running = true,
+    Connections = {},
+    FishDatabase = {},
+    SpawnedFish = {},
+    LastPrinted = {},
+    Notified = {}
+}
+
+Env.AetherFishScanner = Scanner
+
+--==================================================
+-- NOTIFICATIONS
+--==================================================
+
+local function SendNotification(Text, Duration)
+    -- Sound
+    pcall(function()
+        local TemporarySound = Instance.new("Sound")
+        TemporarySound.SoundId = "rbxassetid://96524940709824"
+        TemporarySound.Parent = CoreGui
+        TemporarySound:Play()
+
+        task.delay(5, function()
+            TemporarySound:Destroy()
+        end)
+    end)
+
+    -- Discord webhook
+    if ENABLE_WEBHOOK
+        and WEBHOOK_URL ~= ""
+        and not string.find(WEBHOOK_URL, "PASTE_YOUR_NEW_WEBHOOK_URL_HERE", 1, true)
+    then
+        task.spawn(function()
+            pcall(function()
+                local Payload = {
+                    content = "@everyone - " .. tostring(Text),
+                    allowed_mentions = {
+                        parse = {"everyone"}
+                    }
+                }
+
+                local Response = request({
+                    Url = WEBHOOK_URL,
+                    Method = "POST",
+                    Headers = {
+                        ["Content-Type"] = "application/json"
+                    },
+                    Body = HttpService:JSONEncode(Payload)
+                })
+
+                if Response.StatusCode ~= 204
+                    and Response.StatusCode ~= 200
+                then
+                    warn(
+                        "[FISH SCANNER] Webhook error:",
+                        Response.StatusCode,
+                        Response.Body
+                    )
+                end
+            end)
+        end)
+    end
+
+    -- Roblox notification
+    return StarterGui:SetCore("SendNotification", {
+        Title = "ALERT",
+        Text = Text,
+        Duration = Duration or 15
+    })
+end
+
+--==================================================
+-- FISH INFORMATION
+--==================================================
+
+local function GetRarity(FishName)
+    local FishData = FishLibrary[FishName]
+
+    if typeof(FishData) == "table" then
+        return FishData.Rarity
+    end
+
+    return nil
+end
+
+local function GetFishModel(Hitbox)
+    if not Hitbox then
+        return nil
+    end
+
+    return Hitbox:FindFirstAncestorOfClass("Model")
+end
+
+--==================================================
+-- REMOVE VISUALS
+--==================================================
+
+local function RemoveFishVisuals(FishID)
+    local Hitbox = Scanner.SpawnedFish[FishID]
+    local Model = GetFishModel(Hitbox)
+
+    if not Model then
+        return
+    end
+
+    local Highlight = Model:FindFirstChild("AetherFishHighlight")
+    if Highlight then
+        Highlight:Destroy()
+    end
+
+    local Tracker = Model:FindFirstChild("AetherFishTracker")
+    if Tracker then
+        Tracker:Destroy()
+    end
+end
+
+--==================================================
+-- HIGHLIGHT AND LOCATION TRACKER
+--==================================================
+
+local function HighlightFish(FishID, LabelText)
+    if not Scanner.Running then
+        return
+    end
+
+    if not ENABLE_HIGHLIGHT and not ENABLE_TRACKER then
+        return
+    end
+
+    local Hitbox = Scanner.SpawnedFish[FishID]
+    if not Hitbox then
+        return
+    end
+
+    local Model = GetFishModel(Hitbox)
+    if not Model then
+        return
+    end
+
+    -- Highlight
+    if ENABLE_HIGHLIGHT then
+        local Highlight = Model:FindFirstChild("AetherFishHighlight")
+
+        if not Highlight then
+            Highlight = Instance.new("Highlight")
+            Highlight.Name = "AetherFishHighlight"
+            Highlight.Adornee = Model
+            Highlight.FillColor = Color3.fromRGB(170, 0, 255)
+            Highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+            Highlight.FillTransparency = 0.65
+            Highlight.OutlineTransparency = 0
+            Highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+            Highlight.Parent = Model
+        end
+    end
+
+    -- Floating tracker
+    if ENABLE_TRACKER then
+        local Billboard = Model:FindFirstChild("AetherFishTracker")
+
+        if not Billboard then
+            Billboard = Instance.new("BillboardGui")
+            Billboard.Name = "AetherFishTracker"
+            Billboard.Size = UDim2.fromOffset(260, 65)
+            Billboard.StudsOffset = Vector3.new(0, 4, 0)
+            Billboard.AlwaysOnTop = true
+            Billboard.Adornee = Hitbox
+            Billboard.Parent = Model
+
+            local TextLabel = Instance.new("TextLabel")
+            TextLabel.Name = "FishLabel"
+            TextLabel.Size = UDim2.fromScale(1, 1)
+            TextLabel.BackgroundTransparency = 1
+            TextLabel.TextColor3 = Color3.fromRGB(220, 150, 255)
+            TextLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+            TextLabel.TextStrokeTransparency = 0
+            TextLabel.TextScaled = true
+            TextLabel.TextWrapped = true
+            TextLabel.Font = Enum.Font.GothamBold
+            TextLabel.Parent = Billboard
+        end
+
+        local TextLabel = Billboard:FindFirstChild("FishLabel")
+
+        if TextLabel then
+            TextLabel.Text = LabelText
+        end
+
+        Billboard.Adornee = Hitbox
+    end
+end
+
+--==================================================
+-- ALERT CHECKING
+--==================================================
+
+local function ReportFish(FishID)
+    if not Scanner.Running then
+        return
+    end
+
+    local Data = Scanner.FishDatabase[FishID]
+    if not Data then
+        return
+    end
+
+    local Hitbox = Scanner.SpawnedFish[FishID]
+
+    local Name = Data.Name
+        or (Hitbox and Hitbox:GetAttribute("FishName"))
+        or "Unknown"
+
+    local Rarity = GetRarity(Name)
+
+    local Parts = {
+        "UID: " .. tostring(FishID),
+        "Fish: " .. tostring(Name)
+    }
+
+    if Rarity ~= nil then
+        table.insert(Parts, "Rarity: " .. tostring(Rarity))
+    end
+
+    if Data.Mutation ~= nil then
+        table.insert(Parts, "Mutation: " .. tostring(Data.Mutation))
+    end
+
+    if Data.Hat ~= nil then
+        table.insert(Parts, "Hat: " .. tostring(Data.Hat))
+    end
+
+    local Message = table.concat(Parts, " | ")
+
+    if Scanner.LastPrinted[FishID] ~= Message then
+        Scanner.LastPrinted[FishID] = Message
+        print("[FISH] " .. Message)
+    end
+
+    -- Determine whether fish is special
+    local IsAether = Data.Mutation == "Aether"
+    local IsDivineSecret = Rarity == "Divine Secret"
+
+    if IsAether or IsDivineSecret then
+        local LabelText = Name
+            .. "\n" .. tostring(Rarity or "Unknown")
+
+        if Data.Mutation then
+            LabelText = LabelText
+                .. " | " .. tostring(Data.Mutation)
+        end
+
+        -- This also runs when the model appears after its data
+        HighlightFish(FishID, LabelText)
+    end
+
+    -- Aether notification
+    if IsAether then
+        local AlertKey = tostring(FishID) .. "_Aether"
+
+        if not Scanner.Notified[AlertKey] then
+            Scanner.Notified[AlertKey] = true
+
+            task.spawn(function()
+                pcall(function()
+                    SendNotification(
+                        "AETHER FOUND!\n" .. Name,
+                        15
+                    )
+                end)
+            end)
+        end
+    end
+
+    -- Divine Secret notification
+    if IsDivineSecret then
+        local AlertKey = tostring(FishID) .. "_DivineSecret"
+
+        if not Scanner.Notified[AlertKey] then
+            Scanner.Notified[AlertKey] = true
+
+            task.spawn(function()
+                pcall(function()
+                    SendNotification(
+                        "DIVINE SECRET FOUND!\n" .. Name,
+                        15
+                    )
+                end)
+            end)
+        end
+    end
+end
+
+--==================================================
+-- REMOTE FISH DATA UPDATES
+--==================================================
+
+Scanner.Connections.Remote = Event.OnClientEvent:Connect(function(UpdateTable)
+    if not Scanner.Running then
+        return
+    end
+
+    for FishID, Data in pairs(UpdateTable) do
+        if Data == 0 then
+            RemoveFishVisuals(FishID)
+
+            Scanner.FishDatabase[FishID] = nil
+            Scanner.SpawnedFish[FishID] = nil
+            Scanner.LastPrinted[FishID] = nil
+
+            for Key in pairs(Scanner.Notified) do
+                if string.find(
+                    Key,
+                    tostring(FishID) .. "_",
+                    1,
+                    true
+                ) == 1 then
+                    Scanner.Notified[Key] = nil
+                end
+            end
+
+            print("[FISH DESPAWNED]", FishID)
+
+        elseif typeof(Data) == "table" then
+            local Existing = Scanner.FishDatabase[FishID]
+
+            if not Existing then
+                Existing = {
+                    Name = nil,
+                    Mutation = nil,
+                    Hat = nil
+                }
+
+                Scanner.FishDatabase[FishID] = Existing
+            end
+
+            if Data.f ~= nil then
+                Existing.Name = Data.f
+            end
+
+            if Data.m ~= nil then
+                Existing.Mutation = Data.m
+            end
+
+            if Data.h ~= nil then
+                Existing.Hat = Data.h
+            end
+
+            ReportFish(FishID)
+        end
+    end
+end)
+
+--==================================================
+-- SPAWNED FISH DETECTION
+--==================================================
+
+local function CheckObject(Object)
+    if not Scanner.Running then
+        return
+    end
+
+    if not Object:IsA("BasePart") then
+        return
+    end
+
+    local FishID = Object:GetAttribute("UID")
+    if not FishID then
+        return
+    end
+
+    Scanner.SpawnedFish[FishID] = Object
+
+    local Existing = Scanner.FishDatabase[FishID]
+
+    if not Existing then
+        Existing = {
+            Name = Object:GetAttribute("FishName"),
+            Mutation = nil,
+            Hat = nil
+        }
+
+        Scanner.FishDatabase[FishID] = Existing
+
+    elseif not Existing.Name then
+        Existing.Name = Object:GetAttribute("FishName")
+    end
+
+    ReportFish(FishID)
+end
+
+-- Scan fish that already exist
+for _, Object in ipairs(FishFolder:GetDescendants()) do
+    CheckObject(Object)
+end
+
+-- Detect newly spawned fish
+Scanner.Connections.Spawned =
+    FishFolder.DescendantAdded:Connect(CheckObject)
+
+--==================================================
+-- DISCONNECT
+--==================================================
+
+Scanner.Disconnect = function()
+    if not Scanner.Running then
+        return
+    end
+
+    Scanner.Running = false
+
+    for _, Connection in pairs(Scanner.Connections) do
+        pcall(function()
+            Connection:Disconnect()
+        end)
+    end
+
+    -- Remove all remaining highlights and trackers
+    for FishID in pairs(Scanner.SpawnedFish) do
+        RemoveFishVisuals(FishID)
+    end
+
+    table.clear(Scanner.Connections)
+
+    if Env.AetherFishScanner == Scanner then
+        Env.AetherFishScanner = nil
+    end
+
+    print("[FISH SCANNER] Fully disconnected.")
+end
+
+print("[FISH SCANNER] Running!")
+print("[FISH SCANNER] Watching for Aether mutations and Divine Secret fish.")
+print("[FISH SCANNER] Visual highlights and location trackers enabled.")
