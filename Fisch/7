@@ -74,6 +74,9 @@ local ENABLE_LAST_KNOWN_LOCATION = true
 
 local LOCATION_UPDATE_INTERVAL = 0.15
 
+-- How long a marker remains after a fish disappears or despawns.
+local MARKER_GRACE_PERIOD = 30
+
 --==================================================
 -- SCANNER DATA
 --==================================================
@@ -89,7 +92,9 @@ local Scanner = {
     Notified = {},
 
     LastKnownLocations = {},
-    LocationMarkers = {}
+    LocationMarkers = {},
+
+    PendingRemoval = {}
 }
 
 Env.AetherFishScanner = Scanner
@@ -98,11 +103,21 @@ Env.AetherFishScanner = Scanner
 -- PERSISTENT MARKER FOLDER
 --==================================================
 
-local MarkerFolder = Instance.new("Folder")
-MarkerFolder.Name = "AetherPersistentMarkers"
-MarkerFolder.Parent = Workspace
+local function EnsureMarkerFolder()
+    if Scanner.MarkerFolder and Scanner.MarkerFolder.Parent then
+        return Scanner.MarkerFolder
+    end
 
-Scanner.MarkerFolder = MarkerFolder
+    local Folder = Instance.new("Folder")
+    Folder.Name = "AetherPersistentMarkers"
+    Folder.Parent = Workspace
+
+    Scanner.MarkerFolder = Folder
+
+    return Folder
+end
+
+EnsureMarkerFolder()
 
 --==================================================
 -- NOTIFICATIONS
@@ -117,7 +132,9 @@ local function SendNotification(Text, Duration)
         TemporarySound:Play()
 
         task.delay(5, function()
-            TemporarySound:Destroy()
+            pcall(function()
+                TemporarySound:Destroy()
+            end)
         end)
     end)
 
@@ -212,6 +229,8 @@ local function CreatePersistentMarker(FishID)
         return Marker
     end
 
+    local Folder = EnsureMarkerFolder()
+
     Marker = Instance.new("Part")
     Marker.Name = "LastKnown_" .. tostring(FishID)
     Marker.Size = Vector3.new(2, 2, 2)
@@ -223,7 +242,7 @@ local function CreatePersistentMarker(FishID)
     Marker.CanTouch = false
     Marker.CanQuery = false
     Marker.Transparency = 0.2
-    Marker.Parent = MarkerFolder
+    Marker.Parent = Folder
 
     local Billboard = Instance.new("BillboardGui")
     Billboard.Name = "LocationLabel"
@@ -272,9 +291,15 @@ local function UpdatePersistentMarker(FishID)
     local Label = Billboard and Billboard:FindFirstChild("Label")
 
     if Label then
+        local StatusText = "LAST KNOWN LOCATION"
+
+        if Scanner.PendingRemoval[FishID] then
+            StatusText = "DESPAWNED - " .. MARKER_GRACE_PERIOD .. "s GRACE PERIOD"
+        end
+
         Label.Text = Location.Name
             .. "\n" .. tostring(Location.Rarity or "Unknown")
-            .. "\nLAST KNOWN LOCATION"
+            .. "\n" .. StatusText
             .. "\n" .. string.format(
                 "%.1f, %.1f, %.1f",
                 Location.Position.X,
@@ -398,13 +423,19 @@ local function RemoveFishVisuals(FishID)
     end
 end
 
+--==================================================
+-- REMOVE FISH DATA
+--==================================================
+
 local function RemoveFish(FishID)
     RemoveFishVisuals(FishID)
 
     local Marker = Scanner.LocationMarkers[FishID]
 
     if Marker then
-        Marker:Destroy()
+        pcall(function()
+            Marker:Destroy()
+        end)
     end
 
     Scanner.LocationMarkers[FishID] = nil
@@ -412,6 +443,7 @@ local function RemoveFish(FishID)
     Scanner.FishDatabase[FishID] = nil
     Scanner.SpawnedFish[FishID] = nil
     Scanner.LastPrinted[FishID] = nil
+    Scanner.PendingRemoval[FishID] = nil
 
     for Key in pairs(Scanner.Notified) do
         if string.find(
@@ -423,6 +455,85 @@ local function RemoveFish(FishID)
             Scanner.Notified[Key] = nil
         end
     end
+end
+
+--==================================================
+-- 30 SECOND DELAYED REMOVAL
+--==================================================
+
+local function CancelPendingRemoval(FishID)
+    if Scanner.PendingRemoval[FishID] then
+        Scanner.PendingRemoval[FishID] = nil
+
+        print(
+            "[FISH SCANNER] Removal cancelled - fish returned:",
+            FishID
+        )
+
+        UpdatePersistentMarker(FishID)
+    end
+end
+
+local function ScheduleFishRemoval(FishID)
+    if not Scanner.Running then
+        return
+    end
+
+    -- Don't start multiple timers for the same fish.
+    if Scanner.PendingRemoval[FishID] then
+        return
+    end
+
+    -- Save the last position before starting the countdown.
+    local Hitbox = Scanner.SpawnedFish[FishID]
+    local Data = Scanner.FishDatabase[FishID]
+
+    if Hitbox and Hitbox.Parent and Data and IsSpecial(Data) then
+        local Name = Data.Name
+            or Hitbox:GetAttribute("FishName")
+            or "Unknown"
+
+        SaveFishPosition(
+            FishID,
+            Hitbox,
+            Name,
+            GetRarity(Name),
+            Data.Mutation
+        )
+    end
+
+    local Token = {}
+
+    Scanner.PendingRemoval[FishID] = Token
+
+    UpdatePersistentMarker(FishID)
+
+    print(
+        "[FISH SCANNER] Marker will be removed in "
+            .. MARKER_GRACE_PERIOD
+            .. " seconds:",
+        FishID
+    )
+
+    task.delay(MARKER_GRACE_PERIOD, function()
+        if not Scanner.Running then
+            return
+        end
+
+        -- Check that this is still the active countdown.
+        if Scanner.PendingRemoval[FishID] ~= Token then
+            return
+        end
+
+        Scanner.PendingRemoval[FishID] = nil
+
+        print(
+            "[FISH SCANNER] 30-second grace period expired:",
+            FishID
+        )
+
+        RemoveFish(FishID)
+    end)
 end
 
 --==================================================
@@ -538,11 +649,22 @@ Scanner.Connections.Remote = Event.OnClientEvent:Connect(function(UpdateTable)
     end
 
     for FishID, Data in pairs(UpdateTable) do
+
         if Data == 0 then
-            RemoveFish(FishID)
-            print("[FISH DESPAWNED]", FishID)
+            -- Do not delete immediately.
+            -- Keep the last-known marker for 30 seconds.
+            ScheduleFishRemoval(FishID)
+
+            print(
+                "[FISH DESPAWNED - 30 SECOND GRACE PERIOD]",
+                FishID
+            )
 
         elseif typeof(Data) == "table" then
+
+            -- A new update for this UID cancels its removal timer.
+            CancelPendingRemoval(FishID)
+
             local Existing = Scanner.FishDatabase[FishID]
 
             if not Existing then
@@ -591,6 +713,9 @@ local function CheckObject(Object)
         return
     end
 
+    -- Fish has returned: cancel its pending removal.
+    CancelPendingRemoval(FishID)
+
     Scanner.SpawnedFish[FishID] = Object
 
     local Existing = Scanner.FishDatabase[FishID]
@@ -608,7 +733,7 @@ local function CheckObject(Object)
         Existing.Name = Object:GetAttribute("FishName")
     end
 
-    -- Restore existing last-known marker if model returns
+    -- Restore its last-known marker if the model returns.
     if Scanner.LastKnownLocations[FishID] then
         UpdatePersistentMarker(FishID)
     end
@@ -616,12 +741,18 @@ local function CheckObject(Object)
     ReportFish(FishID)
 end
 
--- Scan existing fish
+--==================================================
+-- SCAN EXISTING FISH
+--==================================================
+
 for _, Object in ipairs(FishFolder:GetDescendants()) do
     CheckObject(Object)
 end
 
--- Detect newly spawned fish
+--==================================================
+-- DETECT NEWLY SPAWNED FISH
+--==================================================
+
 Scanner.Connections.Spawned =
     FishFolder.DescendantAdded:Connect(CheckObject)
 
@@ -646,7 +777,14 @@ Scanner.Connections.PositionUpdate =
 
     Accumulator = 0
 
+    -- Update positions while fish models are available.
     for FishID, Hitbox in pairs(Scanner.SpawnedFish) do
+
+        -- Freeze the last-known position during a despawn countdown.
+        if Scanner.PendingRemoval[FishID] then
+            continue
+        end
+
         if Hitbox and Hitbox.Parent then
             local Data = Scanner.FishDatabase[FishID]
 
@@ -665,18 +803,23 @@ Scanner.Connections.PositionUpdate =
                     Data.Mutation
                 )
             end
+
         else
-            -- Model may have streamed out.
-            -- Keep the last known location and marker.
+            -- Model disappeared or streamed out.
+            -- Keep its last-known location for 30 seconds.
             Scanner.SpawnedFish[FishID] = nil
+
+            ScheduleFishRemoval(FishID)
         end
     end
 
-    -- Recreate markers if the game deletes them
-    for FishID, Location in pairs(Scanner.LastKnownLocations) do
-        if not Scanner.LocationMarkers[FishID]
-            or not Scanner.LocationMarkers[FishID].Parent then
+    -- Recreate markers if the game deletes them or their folder.
+    EnsureMarkerFolder()
 
+    for FishID, Location in pairs(Scanner.LastKnownLocations) do
+        local Marker = Scanner.LocationMarkers[FishID]
+
+        if not Marker or not Marker.Parent then
             Scanner.LocationMarkers[FishID] = nil
             UpdatePersistentMarker(FishID)
         end
@@ -707,7 +850,9 @@ Scanner.Disconnect = function()
     end
 
     if Scanner.MarkerFolder then
-        Scanner.MarkerFolder:Destroy()
+        pcall(function()
+            Scanner.MarkerFolder:Destroy()
+        end)
     end
 
     for FishID in pairs(Scanner.SpawnedFish) do
@@ -715,6 +860,7 @@ Scanner.Disconnect = function()
     end
 
     table.clear(Scanner.Connections)
+    table.clear(Scanner.PendingRemoval)
 
     if Env.AetherFishScanner == Scanner then
         Env.AetherFishScanner = nil
@@ -723,7 +869,12 @@ Scanner.Disconnect = function()
     print("[FISH SCANNER] Fully disconnected.")
 end
 
+--==================================================
+-- START
+--==================================================
+
 print("[FISH SCANNER] Running!")
 print("[FISH SCANNER] Aether and Divine Secret detection enabled.")
 print("[FISH SCANNER] Highlights and floating trackers enabled.")
 print("[FISH SCANNER] Persistent last-known location tracking enabled.")
+print("[FISH SCANNER] Marker grace period:", MARKER_GRACE_PERIOD, "seconds.")
