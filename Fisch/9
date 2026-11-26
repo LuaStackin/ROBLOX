@@ -65,7 +65,7 @@ local FishLibrary = require(
 -- CONFIGURATION
 --==================================================
 
-local WEBHOOK_URL = "PASTE_YOUR_NEW_WEBHOOK_URL_HERE"
+local WEBHOOK_URL = getgenv().FischWebhook
 
 local ENABLE_WEBHOOK = true
 local ENABLE_HIGHLIGHT = true
