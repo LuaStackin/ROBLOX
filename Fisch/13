@@ -40,7 +40,7 @@ if Env.AetherFishScanner then
         end)
     end
 
-    print("[FISH SCANNER] Previous instance disconnected.")
+    --print("[FISH SCANNER] Previous instance disconnected.")
 end
 
 --==================================================
@@ -459,10 +459,10 @@ local function CancelPendingRemoval(FishID)
     if Scanner.PendingRemoval[FishID] then
         Scanner.PendingRemoval[FishID] = nil
 
-        print(
+        --[[print(
             "[FISH SCANNER] Special fish returned:",
             FishID
-        )
+        )]]
 
         UpdatePersistentMarker(FishID)
     end
@@ -515,10 +515,10 @@ local function ScheduleFishRemoval(FishID)
 
     UpdatePersistentMarker(FishID)
 
-    print(
+    --[[print(
         "[FISH SCANNER] Special fish grace period started:",
         FishID
-    )
+    )]]
 
     task.delay(MARKER_GRACE_PERIOD, function()
         if not Scanner.Running then
@@ -532,10 +532,10 @@ local function ScheduleFishRemoval(FishID)
         Scanner.PendingRemoval[FishID] = nil
 
         if Scanner.LastKnownLocations[FishID] then
-            print(
+            --[[print(
                 "[FISH SCANNER] Special fish marker expired:",
                 FishID
-            )
+            )]]
 
             RemoveFish(FishID)
         end
@@ -586,7 +586,7 @@ local function ReportFish(FishID)
 
     if Scanner.LastPrinted[FishID] ~= Message then
         Scanner.LastPrinted[FishID] = Message
-        print("[FISH] " .. Message)
+        --print("[FISH] " .. Message)
     end
 
     local IsAether = Data.Mutation == "Aether"
@@ -870,15 +870,17 @@ Scanner.Disconnect = function()
         Env.AetherFishScanner = nil
     end
 
-    print("[FISH SCANNER] Fully disconnected.")
+    --print("[FISH SCANNER] Fully disconnected.")
 end
 
 --==================================================
 -- START
 --==================================================
 
-print("[FISH SCANNER] Running!")
-print("[FISH SCANNER] Aether detection enabled.")
-print("[FISH SCANNER] Divine Secret detection enabled.")
-print("[FISH SCANNER] Normal fish ignored by grace-period system.")
-print("[FISH SCANNER] Last-known marker duration:", MARKER_GRACE_PERIOD)
+--print("[FISH SCANNER] Running!")
+--print("[FISH SCANNER] Aether detection enabled.")
+--print("[FISH SCANNER] Divine Secret detection enabled.")
+--print("[FISH SCANNER] Normal fish ignored by grace-period system.")
+--print("[FISH SCANNER] Last-known marker duration:", MARKER_GRACE_PERIOD)
+
+warn("-")
